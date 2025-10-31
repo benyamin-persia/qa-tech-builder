@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../lib/utils";
 import { useUser } from "../../contexts/UserContext";
 
@@ -175,6 +176,7 @@ const AnimatedCharacters = ({ className }) => {
   });
   const [purpleLeftEyePosition, setPurpleLeftEyePosition] = useState({ x: 0, y: 0 });
   const [yellowLookAway, setYellowLookAway] = useState({ x: 0, y: 0 });
+  const [hoveredCharacter, setHoveredCharacter] = useState(null);
   const purpleRef = useRef(null);
   const blackRef = useRef(null);
   const yellowRef = useRef(null);
@@ -274,16 +276,16 @@ const AnimatedCharacters = ({ className }) => {
       return { x, y };
     };
 
-    const shouldLookAway = () => Math.random() < 0.6; // 60% chance
+    const shouldLookAway = () => Math.random() < 0.4; // 40% chance
 
     const scheduleLookAway = () => {
-      const getRandomInterval = () => Math.random() * 3000 + 1500; // 1.5-4.5 seconds
+      const getRandomInterval = () => Math.random() * 4000 + 2000; // 2-6 seconds
       
       const timeout = setTimeout(() => {
         if (shouldLookAway()) {
           setYellowLookAway(getLookAwayPosition());
-          // Look away for 300-600ms
-          const lookAwayDuration = Math.random() * 300 + 300;
+          // Look away for 400-800ms
+          const lookAwayDuration = Math.random() * 400 + 400;
           setTimeout(() => {
             setYellowLookAway({ x: 0, y: 0 });
           }, lookAwayDuration);
@@ -442,6 +444,8 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${purplePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
+          onMouseEnter={() => setHoveredCharacter('purple')}
+          onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
           <div
@@ -491,6 +495,8 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${blackPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
+          onMouseEnter={() => setHoveredCharacter('black')}
+          onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
           <div
@@ -538,6 +544,8 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${orangePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
+          onMouseEnter={() => setHoveredCharacter('orange')}
+          onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
           <div
@@ -634,6 +642,8 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${yellowPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
+          onMouseEnter={() => setHoveredCharacter('yellow')}
+          onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
           <div
@@ -673,6 +683,39 @@ const AnimatedCharacters = ({ className }) => {
           />
         </div>
       </div>
+      
+      {/* Character Tooltips */}
+      <AnimatePresence>
+        {hoveredCharacter && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="absolute left-1/2 -translate-x-1/2 top-[-80px] z-[100000] pointer-events-none"
+            style={{
+              left: `${position.x}px`,
+              transform: 'translateX(-50%)',
+            }}
+          >
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl px-4 py-3 text-center min-w-[200px] border-2 border-gray-200 dark:border-gray-700">
+              <div className="absolute inset-x-0 bottom-0 z-30 w-full -bottom-px bg-gradient-to-r from-transparent via-purple-500 to-transparent h-px" />
+              <div className="font-bold text-gray-900 dark:text-white text-sm mb-1">
+                {hoveredCharacter === 'purple' && 'Blue'}
+                {hoveredCharacter === 'black' && 'Black'}
+                {hoveredCharacter === 'orange' && 'Orange'}
+                {hoveredCharacter === 'yellow' && 'Yellow'}
+              </div>
+              <div className="text-gray-600 dark:text-gray-400 text-xs">
+                {hoveredCharacter === 'purple' && 'Hi! We are four friends learning QA together!'}
+                {hoveredCharacter === 'black' && 'Testing is our superpower!'}
+                {hoveredCharacter === 'orange' && 'Quality matters more than speed!'}
+                {hoveredCharacter === 'yellow' && 'Let\'s debug this together!'}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
