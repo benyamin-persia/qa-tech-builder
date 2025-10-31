@@ -521,9 +521,9 @@ const AnimatedCharacters = ({ className }) => {
           >
             {/* Left eye with veins */}
             <div className="relative" style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden' }}>
-              <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="#dc2626" pupilColor="#2D2D2D" isBlinking={false} />
+              <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="#fef2f2" pupilColor="#2D2D2D" isBlinking={false} />
               {/* Red veins */}
-              <div className="absolute inset-0" style={{ mixBlendMode: 'multiply', opacity: 0.4 }}>
+              <div className="absolute inset-0" style={{ mixBlendMode: 'multiply', opacity: 0.3 }}>
                 <div className="absolute bg-red-800" style={{ left: '0px', top: '8px', width: '8px', height: '1px', transform: 'rotate(15deg)' }} />
                 <div className="absolute bg-red-800" style={{ left: '4px', top: '4px', width: '6px', height: '1px', transform: 'rotate(-20deg)' }} />
                 <div className="absolute bg-red-800" style={{ left: '8px', top: '12px', width: '6px', height: '1px', transform: 'rotate(25deg)' }} />
@@ -532,9 +532,9 @@ const AnimatedCharacters = ({ className }) => {
             <div style={{ marginLeft: '6px' }}>
               {/* Right eye with veins */}
               <div className="relative" style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden' }}>
-                <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="#dc2626" pupilColor="#2D2D2D" isBlinking={false} />
+                <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="#fef2f2" pupilColor="#2D2D2D" isBlinking={false} />
                 {/* Red veins */}
-                <div className="absolute inset-0" style={{ mixBlendMode: 'multiply', opacity: 0.4 }}>
+                <div className="absolute inset-0" style={{ mixBlendMode: 'multiply', opacity: 0.3 }}>
                   <div className="absolute bg-red-800" style={{ left: '0px', top: '8px', width: '8px', height: '1px', transform: 'rotate(15deg)' }} />
                   <div className="absolute bg-red-800" style={{ left: '4px', top: '4px', width: '6px', height: '1px', transform: 'rotate(-20deg)' }} />
                   <div className="absolute bg-red-800" style={{ left: '8px', top: '12px', width: '6px', height: '1px', transform: 'rotate(25deg)' }} />
