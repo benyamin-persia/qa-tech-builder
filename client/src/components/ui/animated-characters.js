@@ -390,8 +390,8 @@ const AnimatedCharacters = ({ className }) => {
             }}
           >
             <EyeBall 
-              size={8} 
-              pupilSize={3} 
+              size={10} 
+              pupilSize={4} 
               maxDistance={2} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
@@ -400,8 +400,8 @@ const AnimatedCharacters = ({ className }) => {
               forceLookY={purpleLeftEyePosition.y}
             />
             <EyeBall 
-              size={8} 
-              pupilSize={3} 
+              size={10} 
+              pupilSize={4} 
               maxDistance={2} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
@@ -439,16 +439,16 @@ const AnimatedCharacters = ({ className }) => {
             }}
           >
             <EyeBall 
-              size={7} 
-              pupilSize={3} 
+              size={8} 
+              pupilSize={4} 
               maxDistance={1} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
               isBlinking={isBlackBlinking}
             />
             <EyeBall 
-              size={7} 
-              pupilSize={3} 
+              size={8} 
+              pupilSize={4} 
               maxDistance={1} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
