@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, Github, Twitter, Linkedin, LogOut } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
 
-const Header = ({ onShowAuth, showTetris, onToggleTetris }) => {
+const Header = ({ onShowAuth, showTetris, onToggleTetris, onBackToTutorial, currentPage }) => {
   const { user, logout } = useUser();
   return (
     <header className="py-3">
@@ -22,6 +22,21 @@ const Header = ({ onShowAuth, showTetris, onToggleTetris }) => {
               <h1 className="text-2xl font-bold text-white"><a href="/">QA Tech Builder</a></h1>
               <p className="text-white/70 text-sm">Build your perfect testing stack</p>
             </div>
+            {/* Back to Tutorial Button - only on SQL and Tutorial pages */}
+            {currentPage === 'sql' && (
+              <button 
+                className="btn-secondary ml-8" 
+                onClick={() => {
+                  if (onBackToTutorial) {
+                    onBackToTutorial();
+                  } else if (window.onNavigateBackToTutorial) {
+                    window.onNavigateBackToTutorial();
+                  }
+                }}
+              >
+                Back to Tutorial
+              </button>
+            )}
           </div>
 
           {/* Navigation */}

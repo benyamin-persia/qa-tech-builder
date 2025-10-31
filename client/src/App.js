@@ -485,10 +485,13 @@ const AppContent = () => {
         <div className="fixed inset-0 pointer-events-none z-50">
           <AnimatedCharacters className="w-full h-full" />
         </div>
-        <Header onShowAuth={() => {
-          setAuthMode('login');
-          setShowAuthModal(true);
-        }} />
+        <Header 
+          onShowAuth={() => {
+            setAuthMode('login');
+            setShowAuthModal(true);
+          }}
+          currentPage={currentPage}
+        />
         <LandingPage onStartBuilding={() => setCurrentPage('builder')} />
         <AuthModal 
           isOpen={showAuthModal} 
@@ -504,10 +507,13 @@ const AppContent = () => {
         <div className="fixed inset-0 pointer-events-none z-50">
           <AnimatedCharacters className="w-full h-full" />
         </div>
-        <Header onShowAuth={() => {
-          setAuthMode('login');
-          setShowAuthModal(true);
-        }} />
+        <Header 
+          onShowAuth={() => {
+            setAuthMode('login');
+            setShowAuthModal(true);
+          }}
+          currentPage={currentPage}
+        />
         <TutorialPage onBackToBuilder={backToBuilder} selectedTech={selections.data} getStepOptions={getStepOptions} user={user} />
         <AuthModal 
           isOpen={showAuthModal} 
@@ -532,6 +538,8 @@ const AppContent = () => {
           }}
           showTetris={showTetris}
           onToggleTetris={() => setShowTetris(!showTetris)}
+          currentPage={currentPage}
+          onBackToTutorial={() => setCurrentPage('tutorial')}
         />
         <main className="container mx-auto px-4 py-4 relative" style={{ height: 'calc(100vh - 8rem)', display: 'flex', flexDirection: 'column' }}>
           <div className="mb-2 relative z-20">
@@ -540,19 +548,6 @@ const AppContent = () => {
           <div style={{ flex: 1, overflow: 'hidden' }}>
             <SqlPlaygroundQA onProgressUpdate={handleSqlProgress} showTetris={showTetris} />
           </div>
-          {/* Back to Tutorial Button */}
-          <button 
-            className="btn-secondary absolute top-[-80px] right-0 z-0" 
-            onClick={() => {
-              if (window.onNavigateBackToTutorial) {
-                window.onNavigateBackToTutorial();
-              } else {
-                setCurrentPage('tutorial');
-              }
-            }}
-          >
-            Back to Tutorial
-          </button>
         </main>
         <AuthModal 
           isOpen={showAuthModal} 
@@ -584,10 +579,13 @@ const AppContent = () => {
         />
       )} */}
       
-      <Header onShowAuth={() => {
-        setAuthMode('login');
-        setShowAuthModal(true);
-      }} />
+      <Header 
+        onShowAuth={() => {
+          setAuthMode('login');
+          setShowAuthModal(true);
+        }}
+        currentPage={currentPage}
+      />
       
       <main className="container mx-auto px-4 py-8">
         {/* Main Content */}
