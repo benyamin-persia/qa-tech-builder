@@ -166,10 +166,10 @@ const AnimatedCharacters = ({ className }) => {
       try {
         return JSON.parse(savedSizes);
       } catch (e) {
-        return { purple: 133, black: 89, orange: 67, yellow: 45 };
+        return { purple: 133, black: 98, orange: 67, yellow: 45 };
       }
     }
-    return { purple: 133, black: 89, orange: 67, yellow: 45 };
+    return { purple: 133, black: 98, orange: 67, yellow: 45 };
   });
   const [purpleLeftEyePosition, setPurpleLeftEyePosition] = useState({ x: 0, y: 0 });
   const purpleRef = useRef(null);
@@ -230,9 +230,9 @@ const AnimatedCharacters = ({ className }) => {
   }, [position, userProfile, updateCharactersPosition]);
 
 
-  // Force update black character size to 89 (40% shorter than 148)
+  // Force update black character size to 98 (10% taller than 89)
   useEffect(() => {
-    setSizes(prev => ({ ...prev, black: 89 }));
+    setSizes(prev => ({ ...prev, black: 98 }));
   }, []); // Run once on mount
 
   // Save sizes to localStorage
