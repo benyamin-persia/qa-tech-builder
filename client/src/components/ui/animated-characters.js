@@ -174,6 +174,7 @@ const AnimatedCharacters = ({ className }) => {
     return { purple: 133, black: 98, orange: 67, yellow: 45 };
   });
   const [purpleLeftEyePosition, setPurpleLeftEyePosition] = useState({ x: 0, y: 0 });
+  const [yellowLookAway, setYellowLookAway] = useState({ x: 0, y: 0 });
   const purpleRef = useRef(null);
   const blackRef = useRef(null);
   const yellowRef = useRef(null);
@@ -262,6 +263,38 @@ const AnimatedCharacters = ({ className }) => {
     };
 
     const timeout = setTimeout(updatePosition, getRandomInterval());
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Yellow character randomly looks away for distraction
+  useEffect(() => {
+    const getLookAwayPosition = () => {
+      const x = (Math.random() - 0.5) * 8; // -4 to 4
+      const y = (Math.random() - 0.5) * 8; // -4 to 4
+      return { x, y };
+    };
+
+    const shouldLookAway = () => Math.random() < 0.15; // 15% chance
+
+    const scheduleLookAway = () => {
+      const getRandomInterval = () => Math.random() * 8000 + 4000; // 4-12 seconds
+      
+      const timeout = setTimeout(() => {
+        if (shouldLookAway()) {
+          setYellowLookAway(getLookAwayPosition());
+          // Look away for 200-500ms
+          const lookAwayDuration = Math.random() * 300 + 200;
+          setTimeout(() => {
+            setYellowLookAway({ x: 0, y: 0 });
+          }, lookAwayDuration);
+        }
+        scheduleLookAway();
+      }, getRandomInterval());
+
+      return timeout;
+    };
+
+    const timeout = scheduleLookAway();
     return () => clearTimeout(timeout);
   }, []);
 
@@ -615,8 +648,20 @@ const AnimatedCharacters = ({ className }) => {
               top: `${13 + yellowPos.faceY}px`,
             }}
           >
-            <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
-            <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
+            <Pupil 
+              size={4} 
+              maxDistance={2} 
+              pupilColor="#2D2D2D" 
+              forceLookX={yellowLookAway.x !== 0 ? yellowLookAway.x : undefined}
+              forceLookY={yellowLookAway.y !== 0 ? yellowLookAway.y : undefined}
+            />
+            <Pupil 
+              size={4} 
+              maxDistance={2} 
+              pupilColor="#2D2D2D" 
+              forceLookX={yellowLookAway.x !== 0 ? yellowLookAway.x : undefined}
+              forceLookY={yellowLookAway.y !== 0 ? yellowLookAway.y : undefined}
+            />
           </div>
           {/* Mouth */}
           <div 
