@@ -695,7 +695,7 @@ const AnimatedCharacters = ({ className }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="absolute left-1/2 -translate-x-1/2 top-[-100px] z-[100000] pointer-events-none"
+            className="absolute -translate-x-1/2 top-[-120px] z-[100000] pointer-events-none"
             style={{
               left: `${position.x}px`,
             }}
