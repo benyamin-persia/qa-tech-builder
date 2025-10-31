@@ -230,6 +230,11 @@ const AnimatedCharacters = ({ className }) => {
   }, [position, userProfile, updateCharactersPosition]);
 
 
+  // Force update black character size to 89 (40% shorter than 148)
+  useEffect(() => {
+    setSizes(prev => ({ ...prev, black: 89 }));
+  }, []); // Run once on mount
+
   // Save sizes to localStorage
   useEffect(() => {
     localStorage.setItem('charactersSizes', JSON.stringify(sizes));
