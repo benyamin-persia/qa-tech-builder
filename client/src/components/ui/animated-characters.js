@@ -166,10 +166,10 @@ const AnimatedCharacters = ({ className }) => {
       try {
         return JSON.parse(savedSizes);
       } catch (e) {
-        return { purple: 133, black: 124, orange: 67, yellow: 45 };
+        return { purple: 133, black: 148, orange: 67, yellow: 45 };
       }
     }
-    return { purple: 133, black: 124, orange: 67, yellow: 45 };
+    return { purple: 133, black: 148, orange: 67, yellow: 45 };
   });
   const [purpleLeftEyePosition, setPurpleLeftEyePosition] = useState({ x: 0, y: 0 });
   const purpleRef = useRef(null);
