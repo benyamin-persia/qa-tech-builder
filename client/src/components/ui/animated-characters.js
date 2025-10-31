@@ -511,7 +511,7 @@ const AnimatedCharacters = ({ className }) => {
             className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize z-10"
             onMouseDown={(e) => handleResizeMouseDown('orange', e)}
           />
-          {/* Eyes - just pupils */}
+          {/* Eyes - white circles behind glasses */}
           <div 
             className="absolute flex gap-3 transition-all duration-200 ease-out"
             style={{
@@ -519,18 +519,19 @@ const AnimatedCharacters = ({ className }) => {
               top: `${20 + orangePos.faceY}px`,
             }}
           >
-            <Pupil size={4} maxDistance={1} pupilColor="#2D2D2D" />
-            <Pupil size={4} maxDistance={1} pupilColor="#2D2D2D" />
+            <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
+            <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
           </div>
-          {/* Glasses */}
+          {/* Glasses - overlay on top of eyes */}
           <div 
             className="absolute transition-all duration-200 ease-out"
             style={{
-              left: `${30 + orangePos.faceX}px`,
-              top: `${18 + orangePos.faceY}px`,
+              left: `${38 + orangePos.faceX}px`,
+              top: `${20 + orangePos.faceY}px`,
+              zIndex: 10,
             }}
           >
-            {/* Left lens */}
+            {/* Left lens frame */}
             <div 
               className="absolute border-2 border-[#2D2D2D] rounded-full bg-transparent"
               style={{
@@ -538,7 +539,7 @@ const AnimatedCharacters = ({ className }) => {
                 height: '16px',
               }}
             />
-            {/* Right lens */}
+            {/* Right lens frame */}
             <div 
               className="absolute border-2 border-[#2D2D2D] rounded-full bg-transparent"
               style={{
