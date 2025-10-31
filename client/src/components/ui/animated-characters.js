@@ -263,23 +263,36 @@ const AnimatedCharacters = ({ className }) => {
     return () => clearTimeout(timeout);
   }, []);
 
-  // Blinking effects
+  // Blinking effects - separated to ensure different timing
   useEffect(() => {
-    const getRandomBlinkInterval = () => Math.random() * 4000 + 3000;
-
-    const scheduleBlink = (setBlinking) => {
-      const blinkTimeout = setTimeout(() => {
-        setBlinking(true);
+    // Purple character blinking
+    const schedulePurpleBlink = () => {
+      const getRandomPurpleInterval = () => Math.random() * 4000 + 3000;
+      const purpleTimeout = setTimeout(() => {
+        setIsPurpleBlinking(true);
         setTimeout(() => {
-          setBlinking(false);
-          scheduleBlink(setBlinking);
+          setIsPurpleBlinking(false);
+          schedulePurpleBlink();
         }, 150);
-      }, getRandomBlinkInterval());
-      return blinkTimeout;
+      }, getRandomPurpleInterval());
+      return purpleTimeout;
     };
 
-    const purpleTimeout = scheduleBlink(setIsPurpleBlinking);
-    const blackTimeout = scheduleBlink(setIsBlackBlinking);
+    // Black character blinking - different base time to ensure randomness
+    const scheduleBlackBlink = () => {
+      const getRandomBlackInterval = () => Math.random() * 4000 + 2000; // Different base (2000-6000 vs 3000-7000)
+      const blackTimeout = setTimeout(() => {
+        setIsBlackBlinking(true);
+        setTimeout(() => {
+          setIsBlackBlinking(false);
+          scheduleBlackBlink();
+        }, 150);
+      }, getRandomBlackInterval());
+      return blackTimeout;
+    };
+
+    const purpleTimeout = schedulePurpleBlink();
+    const blackTimeout = scheduleBlackBlink();
 
     return () => {
       clearTimeout(purpleTimeout);
