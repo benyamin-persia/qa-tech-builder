@@ -519,7 +519,7 @@ const AnimatedCharacters = ({ className }) => {
               top: `${20 + orangePos.faceY}px`,
             }}
           >
-            {/* Left eye with veins */}
+            {/* Right eye with veins (swapped to left position) */}
             <div className="relative" style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden' }}>
               <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="#fef2f2" pupilColor="#2D2D2D" isBlinking={false} />
               {/* Red veins */}
@@ -533,7 +533,7 @@ const AnimatedCharacters = ({ className }) => {
               </div>
             </div>
             <div style={{ marginLeft: '6px' }}>
-              {/* Right eye with veins */}
+              {/* Left eye with veins (swapped to right position) */}
               <div className="relative" style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden' }}>
                 <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="#fef2f2" pupilColor="#2D2D2D" isBlinking={false} />
                 {/* Red veins */}
