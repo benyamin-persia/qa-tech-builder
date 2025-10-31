@@ -520,7 +520,7 @@ const AnimatedCharacters = ({ className }) => {
             }}
           >
             <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
-            <div style={{ marginLeft: '8px' }}>
+            <div style={{ marginLeft: '6px' }}>
               <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
             </div>
           </div>
@@ -535,7 +535,7 @@ const AnimatedCharacters = ({ className }) => {
           >
             {/* Left lens frame */}
             <div 
-              className="absolute border-2 border-[#2D2D2D] rounded-full bg-transparent"
+              className="absolute border-[3px] border-[#2D2D2D] rounded-full bg-transparent"
               style={{
                 width: '16px',
                 height: '16px',
@@ -543,9 +543,9 @@ const AnimatedCharacters = ({ className }) => {
             />
             {/* Right lens frame */}
             <div 
-              className="absolute border-2 border-[#2D2D2D] rounded-full bg-transparent"
+              className="absolute border-[3px] border-[#2D2D2D] rounded-full bg-transparent"
               style={{
-                left: '24px',
+                left: '22px',
                 width: '16px',
                 height: '16px',
               }}
