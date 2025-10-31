@@ -327,8 +327,12 @@ const AnimatedCharacters = ({ className }) => {
     const deltaX = mouseX - centerX;
     const deltaY = mouseY - centerY;
 
-    const faceX = Math.max(-5, Math.min(5, deltaX / 40));
-    const faceY = Math.max(-3, Math.min(3, deltaY / 50));
+    // Calculate safe movement limits based on character width
+    const characterWidth = rect.width;
+    const maxMoveX = (characterWidth / 2) - 10; // Leave 10px margin for eyes
+    
+    const faceX = Math.max(-maxMoveX, Math.min(maxMoveX, deltaX / 20));
+    const faceY = Math.max(-5, Math.min(5, deltaY / 30));
     const bodySkew = Math.max(-6, Math.min(6, -deltaX / 120));
 
     return { faceX, faceY, bodySkew };
