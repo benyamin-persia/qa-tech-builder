@@ -415,7 +415,7 @@ const AnimatedCharacters = ({ className }) => {
           ref={blackRef}
           className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
-            left: '80px',
+            left: '74px',
             width: '40px',
             height: `${sizes.black}px`,
             backgroundColor: '#2D2D2D',
