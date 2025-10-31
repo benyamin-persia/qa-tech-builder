@@ -522,6 +522,42 @@ const AnimatedCharacters = ({ className }) => {
             <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
             <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
           </div>
+          {/* Glasses */}
+          <div 
+            className="absolute transition-all duration-200 ease-out"
+            style={{
+              left: `${30 + orangePos.faceX}px`,
+              top: `${18 + orangePos.faceY}px`,
+            }}
+          >
+            {/* Left lens */}
+            <div 
+              className="absolute border-2 border-[#2D2D2D] rounded-full bg-transparent"
+              style={{
+                width: '16px',
+                height: '16px',
+              }}
+            />
+            {/* Right lens */}
+            <div 
+              className="absolute border-2 border-[#2D2D2D] rounded-full bg-transparent"
+              style={{
+                left: '20px',
+                width: '16px',
+                height: '16px',
+              }}
+            />
+            {/* Bridge */}
+            <div 
+              className="absolute bg-[#2D2D2D]"
+              style={{
+                left: '14px',
+                top: '7px',
+                width: '8px',
+                height: '2px',
+              }}
+            />
+          </div>
         </div>
 
         {/* Yellow rounded rectangle character - Front right (z-4) */}
