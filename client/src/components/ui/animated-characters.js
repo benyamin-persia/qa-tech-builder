@@ -543,19 +543,6 @@ const AnimatedCharacters = ({ className }) => {
             <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
             <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
           </div>
-          {/* Sad mouth */}
-          <div 
-            className="absolute transition-all duration-700 ease-in-out"
-            style={{
-              left: `${30 + orangePos.faceX}px`,
-              top: `${45 + orangePos.faceY}px`,
-              width: '20px',
-              height: '10px',
-              border: '2px solid #2D2D2D',
-              borderBottom: 'none',
-              borderRadius: '10px 10px 0 0',
-            }}
-          />
         </div>
 
         {/* Yellow rounded rectangle character - Front right (z-4) */}
