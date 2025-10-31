@@ -145,6 +145,8 @@ const AnimatedCharacters = ({ className }) => {
   const [mouseY, setMouseY] = useState(0);
   const [isPurpleBlinking, setIsPurpleBlinking] = useState(false);
   const [isBlackBlinking, setIsBlackBlinking] = useState(false);
+  const [isBlackLeftEyeBlinking, setIsBlackLeftEyeBlinking] = useState(false);
+  const [isBlackRightEyeBlinking, setIsBlackRightEyeBlinking] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [position, setPosition] = useState(() => {
@@ -278,25 +280,40 @@ const AnimatedCharacters = ({ className }) => {
       return purpleTimeout;
     };
 
-    // Black character blinking - different base time to ensure randomness
-    const scheduleBlackBlink = () => {
-      const getRandomBlackInterval = () => Math.random() * 7000 + 8000; // 8-15 seconds
-      const blackTimeout = setTimeout(() => {
-        setIsBlackBlinking(true);
+    // Black character left eye blinking independently
+    const scheduleBlackLeftEyeBlink = () => {
+      const getRandomLeftInterval = () => Math.random() * 7000 + 8000; // 8-15 seconds
+      const leftTimeout = setTimeout(() => {
+        setIsBlackLeftEyeBlinking(true);
         setTimeout(() => {
-          setIsBlackBlinking(false);
-          scheduleBlackBlink();
+          setIsBlackLeftEyeBlinking(false);
+          scheduleBlackLeftEyeBlink();
         }, 150);
-      }, getRandomBlackInterval());
-      return blackTimeout;
+      }, getRandomLeftInterval());
+      return leftTimeout;
+    };
+
+    // Black character right eye blinking independently
+    const scheduleBlackRightEyeBlink = () => {
+      const getRandomRightInterval = () => Math.random() * 7000 + 8000; // 8-15 seconds
+      const rightTimeout = setTimeout(() => {
+        setIsBlackRightEyeBlinking(true);
+        setTimeout(() => {
+          setIsBlackRightEyeBlinking(false);
+          scheduleBlackRightEyeBlink();
+        }, 150);
+      }, getRandomRightInterval());
+      return rightTimeout;
     };
 
     const purpleTimeout = schedulePurpleBlink();
-    const blackTimeout = scheduleBlackBlink();
+    const blackLeftTimeout = scheduleBlackLeftEyeBlink();
+    const blackRightTimeout = scheduleBlackRightEyeBlink();
 
     return () => {
       clearTimeout(purpleTimeout);
-      clearTimeout(blackTimeout);
+      clearTimeout(blackLeftTimeout);
+      clearTimeout(blackRightTimeout);
     };
   }, []);
 
@@ -457,7 +474,7 @@ const AnimatedCharacters = ({ className }) => {
               maxDistance={1} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
-              isBlinking={isBlackBlinking}
+              isBlinking={isBlackLeftEyeBlinking}
             />
             <EyeBall 
               size={8} 
@@ -465,7 +482,7 @@ const AnimatedCharacters = ({ className }) => {
               maxDistance={1} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
-              isBlinking={isBlackBlinking}
+              isBlinking={isBlackRightEyeBlinking}
             />
           </div>
         </div>
