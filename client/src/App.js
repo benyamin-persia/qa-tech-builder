@@ -513,6 +513,7 @@ const AppContent = () => {
             setShowAuthModal(true);
           }}
           currentPage={currentPage}
+          onBackToTutorial={backToBuilder}
         />
         <TutorialPage onBackToBuilder={backToBuilder} selectedTech={selections.data} getStepOptions={getStepOptions} user={user} />
         <AuthModal 

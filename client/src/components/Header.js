@@ -22,7 +22,7 @@ const Header = ({ onShowAuth, showTetris, onToggleTetris, onBackToTutorial, curr
               <h1 className="text-2xl font-bold text-white"><a href="/">QA Tech Builder</a></h1>
               <p className="text-white/70 text-sm">Build your perfect testing stack</p>
             </div>
-            {/* Back to Tutorial Button - only on SQL and Tutorial pages */}
+            {/* Back to Tutorial Button - only on SQL page */}
             {currentPage === 'sql' && (
               <button 
                 className="btn-secondary ml-8" 
@@ -35,6 +35,19 @@ const Header = ({ onShowAuth, showTetris, onToggleTetris, onBackToTutorial, curr
                 }}
               >
                 Back to Tutorial
+              </button>
+            )}
+            {/* Back to Main Page Button - only on Tutorial page */}
+            {currentPage === 'tutorial' && (
+              <button 
+                className="btn-secondary ml-8" 
+                onClick={() => {
+                  if (onBackToTutorial) {
+                    onBackToTutorial();
+                  }
+                }}
+              >
+                Back to Main Page
               </button>
             )}
           </div>

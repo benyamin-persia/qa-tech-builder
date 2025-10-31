@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowLeft, BookOpen, Play, CheckCircle, Lock } from 'lucide-react';
 import { getTechIcon, getCategoryIcon } from '../utils/techIcons';
-import { BounceCardSqlLab } from './ui/BounceCardSqlLab';
 
 const TutorialPage = ({ onBackToBuilder, selectedTech, getStepOptions, user }) => {
   const handleBackToMain = () => {
@@ -62,14 +61,7 @@ const TutorialPage = ({ onBackToBuilder, selectedTech, getStepOptions, user }) =
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-8">
-          <button
-            onClick={handleBackToMain}
-            className="btn-secondary flex items-center mr-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Main Page
-          </button>
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">Learning Path</h1>
         </div>
 
@@ -122,15 +114,32 @@ const TutorialPage = ({ onBackToBuilder, selectedTech, getStepOptions, user }) =
               <p className="text-white/70 text-sm">Build real projects</p>
             </div>
 
-            {/* SQL Lab entry point - Animated bounce card */}
-            <BounceCardSqlLab 
-              user={user}
-              onOpenLab={() => {
-                if (window && typeof window.onNavigateToSql === 'function') {
-                  window.onNavigateToSql();
-                }
-              }}
-            />
+            {/* SQL Lab entry point */}
+            <div className="p-4 rounded-xl border border-white/20 bg-white/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-white font-semibold">Practice SQL (in-browser)</h3>
+                    {!user && <Lock className="w-4 h-4 text-yellow-400" />}
+                  </div>
+                  <p className="text-white/70 text-sm">
+                    Run queries against a seeded dataset without installing Postgres.
+                    {!user && <span className="text-yellow-400 block mt-1">⚠️ Login required to access SQL Lab</span>}
+                  </p>
+                </div>
+                <button
+                  className="btn-primary flex items-center gap-2"
+                  onClick={() => {
+                    if (window && typeof window.onNavigateToSql === 'function') {
+                      window.onNavigateToSql();
+                    }
+                  }}
+                >
+                  {!user && <Lock className="w-4 h-4" />}
+                  Open SQL Lab
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
