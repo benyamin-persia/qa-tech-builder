@@ -337,13 +337,15 @@ const AnimatedCharacters = ({ className }) => {
   return (
     <div className={cn("relative w-full h-full", className)}>
       
-      {/* Characters positioned beside each other - Draggable */}
+      {/* Characters positioned overlapping each other - Draggable */}
       <div 
         ref={containerRef}
-        className="absolute flex items-end gap-4 cursor-move select-none"
+        className="absolute cursor-move select-none"
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
+          width: '350px',
+          height: '400px',
           transform: 'translate(-50%, 0)',
           opacity: 1,
           zIndex: 99999,
@@ -353,15 +355,17 @@ const AnimatedCharacters = ({ className }) => {
         onMouseDown={handleMouseDown}
       >
         
-        {/* Purple tall rectangle character */}
+        {/* Purple tall rectangle character - Back layer (z-1) */}
         <div 
           ref={purpleRef}
-          className="transition-all duration-700 ease-in-out relative"
+          className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
+            left: '70px',
             width: '60px',
             height: `${sizes.purple}px`,
             backgroundColor: '#6C3FF5',
             borderRadius: '10px 10px 0 0',
+            zIndex: 1,
             transform: `skewX(${purplePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
@@ -400,15 +404,17 @@ const AnimatedCharacters = ({ className }) => {
           </div>
         </div>
 
-        {/* Black medium rectangle character */}
+        {/* Black medium rectangle character - Middle layer (z-2) */}
         <div 
           ref={blackRef}
-          className="transition-all duration-700 ease-in-out relative"
+          className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
+            left: '130px',
             width: '40px',
             height: `${sizes.black}px`,
             backgroundColor: '#2D2D2D',
             borderRadius: '8px 8px 0 0',
+            zIndex: 2,
             transform: `skewX(${blackPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
@@ -445,15 +451,17 @@ const AnimatedCharacters = ({ className }) => {
           </div>
         </div>
 
-        {/* Orange circle character */}
+        {/* Orange semi-circle character - Front left (z-3) */}
         <div 
           ref={orangeRef}
-          className="transition-all duration-700 ease-in-out relative"
+          className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
-            width: '50px',
-            height: `${sizes.orange}px`,
+            left: '0px',
+            width: '120px',
+            height: '100px',
             backgroundColor: '#FF9B6B',
-            borderRadius: '50%',
+            borderRadius: '60px 60px 0 0',
+            zIndex: 3,
             transform: `skewX(${orangePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
@@ -465,10 +473,10 @@ const AnimatedCharacters = ({ className }) => {
           />
           {/* Eyes - just pupils */}
           <div 
-            className="absolute flex gap-2 transition-all duration-200 ease-out"
+            className="absolute flex gap-4 transition-all duration-200 ease-out"
             style={{
-              left: `${15 + orangePos.faceX}px`,
-              top: `${15 + orangePos.faceY}px`,
+              left: `${50 + orangePos.faceX}px`,
+              top: `${45 + orangePos.faceY}px`,
             }}
           >
             <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
@@ -476,15 +484,17 @@ const AnimatedCharacters = ({ className }) => {
           </div>
         </div>
 
-        {/* Yellow rounded rectangle character */}
+        {/* Yellow rounded rectangle character - Front right (z-4) */}
         <div 
           ref={yellowRef}
-          className="transition-all duration-700 ease-in-out relative"
+          className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
-            width: '45px',
-            height: `${sizes.yellow}px`,
+            left: '200px',
+            width: '70px',
+            height: '115px',
             backgroundColor: '#E8D754',
-            borderRadius: '22px 22px 0 0',
+            borderRadius: '35px 35px 0 0',
+            zIndex: 4,
             transform: `skewX(${yellowPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
@@ -496,10 +506,10 @@ const AnimatedCharacters = ({ className }) => {
           />
           {/* Eyes - just pupils */}
           <div 
-            className="absolute flex gap-1 transition-all duration-200 ease-out"
+            className="absolute flex gap-2 transition-all duration-200 ease-out"
             style={{
-              left: `${15 + yellowPos.faceX}px`,
-              top: `${15 + yellowPos.faceY}px`,
+              left: `${18 + yellowPos.faceX}px`,
+              top: `${35 + yellowPos.faceY}px`,
             }}
           >
             <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
@@ -507,10 +517,10 @@ const AnimatedCharacters = ({ className }) => {
           </div>
           {/* Mouth */}
           <div 
-            className="absolute w-8 h-1 bg-[#2D2D2D] rounded-full transition-all duration-200 ease-out"
+            className="absolute w-10 h-1 bg-[#2D2D2D] rounded-full transition-all duration-200 ease-out"
             style={{
-              left: `${12 + yellowPos.faceX}px`,
-              top: `${35 + yellowPos.faceY}px`,
+              left: `${15 + yellowPos.faceX}px`,
+              top: `${55 + yellowPos.faceY}px`,
             }}
           />
         </div>
