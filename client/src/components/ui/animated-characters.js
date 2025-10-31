@@ -166,10 +166,10 @@ const AnimatedCharacters = ({ className }) => {
       try {
         return JSON.parse(savedSizes);
       } catch (e) {
-        return { purple: 120, black: 80, orange: 50, yellow: 70 };
+        return { purple: 400, black: 310, orange: 200, yellow: 230 };
       }
     }
-    return { purple: 120, black: 80, orange: 50, yellow: 70 };
+    return { purple: 400, black: 310, orange: 200, yellow: 230 };
   });
   const [purpleLeftEyePosition, setPurpleLeftEyePosition] = useState({ x: 0, y: 0 });
   const purpleRef = useRef(null);
@@ -344,7 +344,7 @@ const AnimatedCharacters = ({ className }) => {
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
-          width: '350px',
+          width: '550px',
           height: '400px',
           transform: 'translate(-50%, 0)',
           opacity: 1,
@@ -361,7 +361,7 @@ const AnimatedCharacters = ({ className }) => {
           className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
             left: '70px',
-            width: '60px',
+            width: '180px',
             height: `${sizes.purple}px`,
             backgroundColor: '#6C3FF5',
             borderRadius: '10px 10px 0 0',
@@ -377,16 +377,16 @@ const AnimatedCharacters = ({ className }) => {
           />
           {/* Eyes */}
           <div 
-            className="absolute flex gap-2 transition-all duration-700 ease-in-out"
+            className="absolute flex gap-8 transition-all duration-700 ease-in-out"
             style={{
-              left: `${20 + purplePos.faceX}px`,
-              top: `${20 + purplePos.faceY}px`,
+              left: `${45 + purplePos.faceX}px`,
+              top: `${40 + purplePos.faceY}px`,
             }}
           >
             <EyeBall 
-              size={12} 
-              pupilSize={4} 
-              maxDistance={3} 
+              size={18} 
+              pupilSize={7} 
+              maxDistance={5} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
               isBlinking={isPurpleBlinking}
@@ -394,9 +394,9 @@ const AnimatedCharacters = ({ className }) => {
               forceLookY={purpleLeftEyePosition.y}
             />
             <EyeBall 
-              size={12} 
-              pupilSize={4} 
-              maxDistance={3} 
+              size={18} 
+              pupilSize={7} 
+              maxDistance={5} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
               isBlinking={isPurpleBlinking}
@@ -409,8 +409,8 @@ const AnimatedCharacters = ({ className }) => {
           ref={blackRef}
           className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
-            left: '130px',
-            width: '40px',
+            left: '240px',
+            width: '120px',
             height: `${sizes.black}px`,
             backgroundColor: '#2D2D2D',
             borderRadius: '8px 8px 0 0',
@@ -426,24 +426,24 @@ const AnimatedCharacters = ({ className }) => {
           />
           {/* Eyes */}
           <div 
-            className="absolute flex gap-1 transition-all duration-700 ease-in-out"
+            className="absolute flex gap-6 transition-all duration-700 ease-in-out"
             style={{
-              left: `${12 + blackPos.faceX}px`,
-              top: `${15 + blackPos.faceY}px`,
+              left: `${26 + blackPos.faceX}px`,
+              top: `${32 + blackPos.faceY}px`,
             }}
           >
             <EyeBall 
-              size={10} 
-              pupilSize={3} 
-              maxDistance={2} 
+              size={16} 
+              pupilSize={6} 
+              maxDistance={4} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
               isBlinking={isBlackBlinking}
             />
             <EyeBall 
-              size={10} 
-              pupilSize={3} 
-              maxDistance={2} 
+              size={16} 
+              pupilSize={6} 
+              maxDistance={4} 
               eyeColor="white" 
               pupilColor="#2D2D2D" 
               isBlinking={isBlackBlinking}
@@ -457,10 +457,10 @@ const AnimatedCharacters = ({ className }) => {
           className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
             left: '0px',
-            width: '120px',
-            height: '100px',
+            width: '240px',
+            height: `${sizes.orange}px`,
             backgroundColor: '#FF9B6B',
-            borderRadius: '60px 60px 0 0',
+            borderRadius: '120px 120px 0 0',
             zIndex: 3,
             transform: `skewX(${orangePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
@@ -473,14 +473,14 @@ const AnimatedCharacters = ({ className }) => {
           />
           {/* Eyes - just pupils */}
           <div 
-            className="absolute flex gap-4 transition-all duration-200 ease-out"
+            className="absolute flex gap-8 transition-all duration-200 ease-out"
             style={{
               left: `${50 + orangePos.faceX}px`,
-              top: `${45 + orangePos.faceY}px`,
+              top: `${85 + orangePos.faceY}px`,
             }}
           >
-            <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
-            <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
+            <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" />
+            <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" />
           </div>
         </div>
 
@@ -489,11 +489,11 @@ const AnimatedCharacters = ({ className }) => {
           ref={yellowRef}
           className="absolute bottom-0 transition-all duration-700 ease-in-out"
           style={{
-            left: '200px',
-            width: '70px',
-            height: '115px',
+            left: '310px',
+            width: '140px',
+            height: `${sizes.yellow}px`,
             backgroundColor: '#E8D754',
-            borderRadius: '35px 35px 0 0',
+            borderRadius: '70px 70px 0 0',
             zIndex: 4,
             transform: `skewX(${yellowPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
@@ -506,21 +506,21 @@ const AnimatedCharacters = ({ className }) => {
           />
           {/* Eyes - just pupils */}
           <div 
-            className="absolute flex gap-2 transition-all duration-200 ease-out"
+            className="absolute flex gap-6 transition-all duration-200 ease-out"
             style={{
-              left: `${18 + yellowPos.faceX}px`,
-              top: `${35 + yellowPos.faceY}px`,
+              left: `${52 + yellowPos.faceX}px`,
+              top: `${40 + yellowPos.faceY}px`,
             }}
           >
-            <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
-            <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
+            <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" />
+            <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" />
           </div>
           {/* Mouth */}
           <div 
-            className="absolute w-10 h-1 bg-[#2D2D2D] rounded-full transition-all duration-200 ease-out"
+            className="absolute w-20 h-[4px] bg-[#2D2D2D] rounded-full transition-all duration-200 ease-out"
             style={{
-              left: `${15 + yellowPos.faceX}px`,
-              top: `${55 + yellowPos.faceY}px`,
+              left: `${40 + yellowPos.faceX}px`,
+              top: `${88 + yellowPos.faceY}px`,
             }}
           />
         </div>
