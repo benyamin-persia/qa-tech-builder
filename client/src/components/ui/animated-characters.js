@@ -462,7 +462,7 @@ const AnimatedCharacters = ({ className }) => {
           />
           {/* Eyes */}
           <div 
-            className="absolute flex gap-1 transition-all duration-700 ease-in-out"
+            className="absolute flex gap-0 transition-all duration-700 ease-in-out"
             style={{
               left: `${9 + blackPos.faceX}px`,
               top: `${11 + blackPos.faceY}px`,
