@@ -444,7 +444,10 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${purplePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
-          onMouseEnter={() => setHoveredCharacter('purple')}
+          onMouseEnter={() => {
+            console.log('Purple hovered');
+            setHoveredCharacter('purple');
+          }}
           onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
@@ -692,10 +695,9 @@ const AnimatedCharacters = ({ className }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="absolute left-1/2 -translate-x-1/2 top-[-80px] z-[100000] pointer-events-none"
+            className="absolute left-1/2 -translate-x-1/2 top-[-100px] z-[100000] pointer-events-none"
             style={{
               left: `${position.x}px`,
-              transform: 'translateX(-50%)',
             }}
           >
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl px-4 py-3 text-center min-w-[200px] border-2 border-gray-200 dark:border-gray-700">
