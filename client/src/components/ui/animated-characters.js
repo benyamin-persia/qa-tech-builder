@@ -519,9 +519,9 @@ const AnimatedCharacters = ({ className }) => {
               top: `${20 + orangePos.faceY}px`,
             }}
           >
-            <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
+            <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="#fee2e2" pupilColor="#2D2D2D" isBlinking={false} />
             <div style={{ marginLeft: '6px' }}>
-              <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
+              <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="#fee2e2" pupilColor="#2D2D2D" isBlinking={false} />
             </div>
           </div>
           {/* Glasses - overlay on top of eyes */}
