@@ -515,7 +515,7 @@ const AnimatedCharacters = ({ className }) => {
           <div 
             className="absolute flex gap-0 transition-all duration-200 ease-out"
             style={{
-              left: `${32 + orangePos.faceX}px`,
+              left: `${20 + orangePos.faceX}px`,
               top: `${20 + orangePos.faceY}px`,
             }}
           >
@@ -528,7 +528,7 @@ const AnimatedCharacters = ({ className }) => {
           <div 
             className="absolute transition-all duration-200 ease-out"
             style={{
-              left: `${32 + orangePos.faceX}px`,
+              left: `${20 + orangePos.faceX}px`,
               top: `${20 + orangePos.faceY}px`,
               zIndex: 10,
             }}
