@@ -445,7 +445,7 @@ const AnimatedCharacters = ({ className }) => {
             transformOrigin: 'bottom center',
           }}
           onMouseEnter={() => {
-            console.log('Purple hovered');
+            console.log('Purple hovered', 'Position:', position);
             setHoveredCharacter('purple');
           }}
           onMouseLeave={() => setHoveredCharacter(null)}
