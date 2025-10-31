@@ -154,11 +154,11 @@ const AnimatedCharacters = ({ className }) => {
       try {
         return JSON.parse(savedPosition);
       } catch (e) {
-        return { x: 200, y: 200 };
+        return { x: typeof window !== 'undefined' ? window.innerWidth / 2 : 900, y: 200 };
       }
     }
     // Fall back to user profile (for logged-in users)
-    return userProfile?.charactersPosition || { x: 200, y: 200 };
+    return userProfile?.charactersPosition || { x: typeof window !== 'undefined' ? window.innerWidth / 2 : 900, y: 200 };
   });
   const [sizes, setSizes] = useState(() => {
     const savedSizes = localStorage.getItem('charactersSizes');
