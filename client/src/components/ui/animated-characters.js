@@ -438,6 +438,19 @@ const AnimatedCharacters = ({ className }) => {
               isBlinking={isPurpleBlinking}
             />
           </div>
+          {/* Laughing mouth */}
+          <div 
+            className="absolute transition-all duration-700 ease-in-out"
+            style={{
+              left: `${20 + purplePos.faceX}px`,
+              top: `${30 + purplePos.faceY}px`,
+              width: '20px',
+              height: '10px',
+              border: '2px solid #2D2D2D',
+              borderTop: 'none',
+              borderRadius: '0 0 10px 10px',
+            }}
+          />
         </div>
 
         {/* Black medium rectangle character - Middle layer (z-2) */}
