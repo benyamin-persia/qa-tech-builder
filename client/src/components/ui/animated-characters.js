@@ -263,11 +263,11 @@ const AnimatedCharacters = ({ className }) => {
     return () => clearTimeout(timeout);
   }, []);
 
-  // Blinking effects - separated to ensure different timing
+  // Blinking effects - separated to ensure different timing with slower intervals
   useEffect(() => {
     // Purple character blinking
     const schedulePurpleBlink = () => {
-      const getRandomPurpleInterval = () => Math.random() * 4000 + 3000;
+      const getRandomPurpleInterval = () => Math.random() * 8000 + 6000; // 6-14 seconds
       const purpleTimeout = setTimeout(() => {
         setIsPurpleBlinking(true);
         setTimeout(() => {
@@ -280,7 +280,7 @@ const AnimatedCharacters = ({ className }) => {
 
     // Black character blinking - different base time to ensure randomness
     const scheduleBlackBlink = () => {
-      const getRandomBlackInterval = () => Math.random() * 4000 + 2000; // Different base (2000-6000 vs 3000-7000)
+      const getRandomBlackInterval = () => Math.random() * 8000 + 8000; // 8-16 seconds
       const blackTimeout = setTimeout(() => {
         setIsBlackBlinking(true);
         setTimeout(() => {
