@@ -498,6 +498,18 @@ const AnimatedCharacters = ({ className }) => {
               isBlinking={isBlackRightEyeBlinking}
             />
           </div>
+          {/* Serious mouth */}
+          <div 
+            className="absolute transition-all duration-700 ease-in-out"
+            style={{
+              left: `${12 + blackPos.faceX}px`,
+              top: `${25 + blackPos.faceY}px`,
+              width: '16px',
+              height: '2px',
+              backgroundColor: '#2D2D2D',
+              borderRadius: '1px',
+            }}
+          />
         </div>
 
         {/* Orange semi-circle character - Front left (z-3) */}
@@ -531,6 +543,19 @@ const AnimatedCharacters = ({ className }) => {
             <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
             <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
           </div>
+          {/* Sad mouth */}
+          <div 
+            className="absolute transition-all duration-700 ease-in-out"
+            style={{
+              left: `${30 + orangePos.faceX}px`,
+              top: `${45 + orangePos.faceY}px`,
+              width: '20px',
+              height: '10px',
+              border: '2px solid #2D2D2D',
+              borderBottom: 'none',
+              borderRadius: '10px 10px 0 0',
+            }}
+          />
         </div>
 
         {/* Yellow rounded rectangle character - Front right (z-4) */}
