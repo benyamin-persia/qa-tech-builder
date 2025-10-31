@@ -327,8 +327,8 @@ const AnimatedCharacters = ({ className }) => {
     const deltaX = mouseX - centerX;
     const deltaY = mouseY - centerY;
 
-    const faceX = Math.max(-15, Math.min(15, deltaX / 20));
-    const faceY = Math.max(-10, Math.min(10, deltaY / 30));
+    const faceX = Math.max(-5, Math.min(5, deltaX / 40));
+    const faceY = Math.max(-3, Math.min(3, deltaY / 50));
     const bodySkew = Math.max(-6, Math.min(6, -deltaX / 120));
 
     return { faceX, faceY, bodySkew };
