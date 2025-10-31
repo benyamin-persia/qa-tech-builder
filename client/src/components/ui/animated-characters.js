@@ -527,6 +527,9 @@ const AnimatedCharacters = ({ className }) => {
                 <div className="absolute bg-red-800" style={{ left: '0px', top: '8px', width: '8px', height: '1px', transform: 'rotate(15deg)' }} />
                 <div className="absolute bg-red-800" style={{ left: '4px', top: '4px', width: '6px', height: '1px', transform: 'rotate(-20deg)' }} />
                 <div className="absolute bg-red-800" style={{ left: '8px', top: '12px', width: '6px', height: '1px', transform: 'rotate(25deg)' }} />
+                <div className="absolute bg-red-800" style={{ left: '2px', top: '10px', width: '5px', height: '1px', transform: 'rotate(45deg)' }} />
+                <div className="absolute bg-red-800" style={{ left: '6px', top: '2px', width: '5px', height: '1px', transform: 'rotate(-45deg)' }} />
+                <div className="absolute bg-red-800" style={{ left: '10px', top: '6px', width: '4px', height: '1px', transform: 'rotate(60deg)' }} />
               </div>
             </div>
             <div style={{ marginLeft: '6px' }}>
@@ -538,6 +541,9 @@ const AnimatedCharacters = ({ className }) => {
                   <div className="absolute bg-red-800" style={{ left: '0px', top: '8px', width: '8px', height: '1px', transform: 'rotate(15deg)' }} />
                   <div className="absolute bg-red-800" style={{ left: '4px', top: '4px', width: '6px', height: '1px', transform: 'rotate(-20deg)' }} />
                   <div className="absolute bg-red-800" style={{ left: '8px', top: '12px', width: '6px', height: '1px', transform: 'rotate(25deg)' }} />
+                  <div className="absolute bg-red-800" style={{ left: '2px', top: '10px', width: '5px', height: '1px', transform: 'rotate(45deg)' }} />
+                  <div className="absolute bg-red-800" style={{ left: '6px', top: '2px', width: '5px', height: '1px', transform: 'rotate(-45deg)' }} />
+                  <div className="absolute bg-red-800" style={{ left: '10px', top: '6px', width: '4px', height: '1px', transform: 'rotate(60deg)' }} />
                 </div>
               </div>
             </div>
