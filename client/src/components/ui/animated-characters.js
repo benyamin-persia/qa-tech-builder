@@ -515,8 +515,8 @@ const AnimatedCharacters = ({ className }) => {
           <div 
             className="absolute flex gap-3 transition-all duration-200 ease-out"
             style={{
-              left: `${17 + orangePos.faceX}px`,
-              top: `${28 + orangePos.faceY}px`,
+              left: `${35 + orangePos.faceX}px`,
+              top: `${20 + orangePos.faceY}px`,
             }}
           >
             <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
