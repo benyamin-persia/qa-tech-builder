@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "../../lib/utils";
 import { useUser } from "../../contexts/UserContext";
 
@@ -176,13 +175,8 @@ const AnimatedCharacters = ({ className }) => {
   });
   const [purpleLeftEyePosition, setPurpleLeftEyePosition] = useState({ x: 0, y: 0 });
   const [yellowLookAway, setYellowLookAway] = useState({ x: 0, y: 0 });
-  const [hoveredCharacter, setHoveredCharacter] = useState(null);
-  
-  // Tooltip wobble animation
-  const tooltipX = useMotionValue(0);
-  const tooltipRotate = useSpring(useTransform(tooltipX, [-100, 100], [-45, 45]), { stiffness: 100, damping: 5 });
-  const tooltipTranslateX = useSpring(useTransform(tooltipX, [-100, 100], [-50, 50]), { stiffness: 100, damping: 5 });
-  
+  const [speakingCharacter, setSpeakingCharacter] = useState(null);
+  const [speechText, setSpeechText] = useState('');
   const purpleRef = useRef(null);
   const blackRef = useRef(null);
   const yellowRef = useRef(null);
@@ -282,16 +276,16 @@ const AnimatedCharacters = ({ className }) => {
       return { x, y };
     };
 
-    const shouldLookAway = () => Math.random() < 0.4; // 40% chance
+    const shouldLookAway = () => Math.random() < 0.15; // 15% chance
 
     const scheduleLookAway = () => {
-      const getRandomInterval = () => Math.random() * 4000 + 2000; // 2-6 seconds
+      const getRandomInterval = () => Math.random() * 8000 + 4000; // 4-12 seconds
       
       const timeout = setTimeout(() => {
         if (shouldLookAway()) {
           setYellowLookAway(getLookAwayPosition());
-          // Look away for 400-800ms
-          const lookAwayDuration = Math.random() * 400 + 400;
+          // Look away for 200-500ms
+          const lookAwayDuration = Math.random() * 300 + 200;
           setTimeout(() => {
             setYellowLookAway({ x: 0, y: 0 });
           }, lookAwayDuration);
@@ -303,6 +297,78 @@ const AnimatedCharacters = ({ className }) => {
     };
 
     const timeout = scheduleLookAway();
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Random speech bubbles - characters talking to each other
+  useEffect(() => {
+    const characterSpeech = {
+      purple: [
+        "Hi team! Let's test this together!",
+        "I found a bug!",
+        "Quality matters more than speed!",
+        "Let's write better test cases!",
+        "Anyone seen that edge case?"
+      ],
+      orange: [
+        "Wait, I need to check the logs first!",
+        "That looks suspicious...",
+        "Have we tested all scenarios?",
+        "Let me trace that error!",
+        "Is this documented?"
+      ],
+      black: [
+        "Testing is our superpower!",
+        "I can debug this!",
+        "Let's automate this!",
+        "Another day, another bug!",
+        "Need more coffee!"
+      ],
+      yellow: [
+        "Let's debug this together!",
+        "I've got this!",
+        "Time to break some code!",
+        "Who's ready for fun testing?",
+        "Let's make it work!"
+      ]
+    };
+
+    const getRandomCharacter = () => {
+      const characters = ['purple', 'orange', 'black', 'yellow'];
+      return characters[Math.floor(Math.random() * characters.length)];
+    };
+
+    const getRandomSpeech = (character) => {
+      const speeches = characterSpeech[character];
+      return speeches[Math.floor(Math.random() * speeches.length)];
+    };
+
+    const shouldSpeak = () => Math.random() < 0.3; // 30% chance
+
+    const scheduleSpeech = () => {
+      const getRandomInterval = () => Math.random() * 10000 + 5000; // 5-15 seconds
+      
+      const timeout = setTimeout(() => {
+        if (shouldSpeak()) {
+          const character = getRandomCharacter();
+          const speech = getRandomSpeech(character);
+          setSpeakingCharacter(character);
+          setSpeechText(speech);
+          
+          // Show speech for 2-4 seconds
+          const speechDuration = Math.random() * 2000 + 2000;
+          setTimeout(() => {
+            setSpeakingCharacter(null);
+            setSpeechText('');
+          }, speechDuration);
+        }
+        scheduleSpeech();
+      }, getRandomInterval());
+
+      return timeout;
+    };
+
+    const timeout = scheduleSpeech();
     return () => clearTimeout(timeout);
   }, []);
 
@@ -434,10 +500,6 @@ const AnimatedCharacters = ({ className }) => {
           pointerEvents: 'auto',
         }}
         onMouseDown={handleMouseDown}
-        onMouseMove={(e) => {
-          const halfWidth = e.currentTarget.offsetWidth / 2;
-          tooltipX.set(e.nativeEvent.offsetX - halfWidth);
-        }}
       >
         
         {/* Purple tall rectangle character - Back layer (z-1) */}
@@ -454,8 +516,6 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${purplePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
-          onMouseEnter={() => setHoveredCharacter('purple')}
-          onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
           <div
@@ -505,8 +565,6 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${blackPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
-          onMouseEnter={() => setHoveredCharacter('black')}
-          onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
           <div
@@ -554,8 +612,6 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${orangePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
-          onMouseEnter={() => setHoveredCharacter('orange')}
-          onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
           <div
@@ -652,8 +708,6 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${yellowPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
-          onMouseEnter={() => setHoveredCharacter('yellow')}
-          onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
           <div
@@ -693,50 +747,50 @@ const AnimatedCharacters = ({ className }) => {
           />
         </div>
       </div>
-      
-      {/* Character Tooltips */}
-      <AnimatePresence>
-        {hoveredCharacter && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.6 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              transition: {
-                type: "spring",
-                stiffness: 260,
-                damping: 10,
-              },
-            }}
-            exit={{ opacity: 0, y: 20, scale: 0.6 }}
-            className="absolute -translate-x-1/2 z-[100000] pointer-events-none"
-            style={{
-              left: `${position.x}px`,
-              top: `${position.y - 160}px`,
-              translateX: tooltipTranslateX,
-              rotate: tooltipRotate,
-              whiteSpace: "nowrap",
-            }}
-          >
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl px-4 py-3 text-center min-w-[200px] border-2 border-gray-200 dark:border-gray-700">
-              <div className="absolute inset-x-0 bottom-0 z-30 w-full -bottom-px bg-gradient-to-r from-transparent via-purple-500 to-transparent h-px" />
-              <div className="font-bold text-gray-900 dark:text-white text-sm mb-1">
-                {hoveredCharacter === 'purple' && 'Blue'}
-                {hoveredCharacter === 'black' && 'Black'}
-                {hoveredCharacter === 'orange' && 'Orange'}
-                {hoveredCharacter === 'yellow' && 'Yellow'}
+
+      {/* Speech Bubbles */}
+      {speakingCharacter && speechText && (
+        <div 
+          className="absolute z-[100000] pointer-events-none"
+          style={{
+            ...(speakingCharacter === 'purple' && {
+              left: `${position.x - 120}px`,
+              top: `${position.y - 80}px`,
+            }),
+            ...(speakingCharacter === 'orange' && {
+              left: `${position.x - 120}px`,
+              top: `${position.y - 60}px`,
+            }),
+            ...(speakingCharacter === 'black' && {
+              left: `${position.x + 50}px`,
+              top: `${position.y - 80}px`,
+            }),
+            ...(speakingCharacter === 'yellow' && {
+              left: `${position.x + 50}px`,
+              top: `${position.y - 60}px`,
+            }),
+          }}
+        >
+          {/* Speech bubble with tail */}
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl px-3 py-2 shadow-xl border-2 border-gray-300 dark:border-gray-600 max-w-[200px]">
+            {/* Tail pointing to character */}
+            {(speakingCharacter === 'purple' || speakingCharacter === 'orange') && (
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[1px]">
+                <div className="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px] border-l-white dark:border-l-gray-800" />
               </div>
-              <div className="text-gray-600 dark:text-gray-400 text-xs">
-                {hoveredCharacter === 'purple' && 'Hi! We are four friends learning QA together!'}
-                {hoveredCharacter === 'black' && 'Testing is our superpower!'}
-                {hoveredCharacter === 'orange' && 'Quality matters more than speed!'}
-                {hoveredCharacter === 'yellow' && 'Let\'s debug this together!'}
+            )}
+            {(speakingCharacter === 'black' || speakingCharacter === 'yellow') && (
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[1px]">
+                <div className="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[8px] border-r-white dark:border-r-gray-800" />
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            )}
+            
+            <p className="text-sm text-gray-900 dark:text-white font-medium leading-tight">
+              {speechText}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
