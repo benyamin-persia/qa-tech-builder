@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "../../lib/utils";
 import { useUser } from "../../contexts/UserContext";
 
@@ -177,6 +177,12 @@ const AnimatedCharacters = ({ className }) => {
   const [purpleLeftEyePosition, setPurpleLeftEyePosition] = useState({ x: 0, y: 0 });
   const [yellowLookAway, setYellowLookAway] = useState({ x: 0, y: 0 });
   const [hoveredCharacter, setHoveredCharacter] = useState(null);
+  
+  // Tooltip wobble animation
+  const tooltipX = useMotionValue(0);
+  const tooltipRotate = useSpring(useTransform(tooltipX, [-100, 100], [-45, 45]), { stiffness: 100, damping: 5 });
+  const tooltipTranslateX = useSpring(useTransform(tooltipX, [-100, 100], [-50, 50]), { stiffness: 100, damping: 5 });
+  
   const purpleRef = useRef(null);
   const blackRef = useRef(null);
   const yellowRef = useRef(null);
@@ -428,6 +434,10 @@ const AnimatedCharacters = ({ className }) => {
           pointerEvents: 'auto',
         }}
         onMouseDown={handleMouseDown}
+        onMouseMove={(e) => {
+          const halfWidth = e.currentTarget.offsetWidth / 2;
+          tooltipX.set(e.nativeEvent.offsetX - halfWidth);
+        }}
       >
         
         {/* Purple tall rectangle character - Back layer (z-1) */}
@@ -444,10 +454,7 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${purplePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
-          onMouseEnter={() => {
-            console.log('Purple hovered', 'Position:', position);
-            setHoveredCharacter('purple');
-          }}
+          onMouseEnter={() => setHoveredCharacter('purple')}
           onMouseLeave={() => setHoveredCharacter(null)}
         >
           {/* Resize handle */}
@@ -691,14 +698,25 @@ const AnimatedCharacters = ({ className }) => {
       <AnimatePresence>
         {hoveredCharacter && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            initial={{ opacity: 0, y: 20, scale: 0.6 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              transition: {
+                type: "spring",
+                stiffness: 260,
+                damping: 10,
+              },
+            }}
+            exit={{ opacity: 0, y: 20, scale: 0.6 }}
             className="absolute -translate-x-1/2 z-[100000] pointer-events-none"
             style={{
               left: `${position.x}px`,
               bottom: `${position.y + 160}px`,
+              translateX: tooltipTranslateX,
+              rotate: tooltipRotate,
+              whiteSpace: "nowrap",
             }}
           >
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl px-4 py-3 text-center min-w-[200px] border-2 border-gray-200 dark:border-gray-700">
