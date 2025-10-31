@@ -1,0 +1,522 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { cn } from "../../lib/utils";
+import { useUser } from "../../contexts/UserContext";
+
+const Pupil = ({ 
+  size = 12, 
+  maxDistance = 5,
+  pupilColor = "black",
+  forceLookX,
+  forceLookY
+}) => {
+  const [mouseX, setMouseX] = useState(0);
+  const [mouseY, setMouseY] = useState(0);
+  const pupilRef = useRef(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMouseX(e.clientX);
+      setMouseY(e.clientY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const calculatePupilPosition = () => {
+    if (!pupilRef.current) return { x: 0, y: 0 };
+
+    if (forceLookX !== undefined && forceLookY !== undefined) {
+      return { x: forceLookX, y: forceLookY };
+    }
+
+    const pupil = pupilRef.current.getBoundingClientRect();
+    const pupilCenterX = pupil.left + pupil.width / 2;
+    const pupilCenterY = pupil.top + pupil.height / 2;
+
+    const deltaX = mouseX - pupilCenterX;
+    const deltaY = mouseY - pupilCenterY;
+    const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
+
+    const angle = Math.atan2(deltaY, deltaX);
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+
+    return { x, y };
+  };
+
+  const pupilPosition = calculatePupilPosition();
+
+  return (
+    <div
+      ref={pupilRef}
+      className="rounded-full"
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        backgroundColor: pupilColor,
+        transform: `translate(${pupilPosition.x}px, ${pupilPosition.y}px)`,
+        transition: 'transform 0.1s ease-out',
+      }}
+    />
+  );
+};
+
+const EyeBall = ({ 
+  size = 48, 
+  pupilSize = 16, 
+  maxDistance = 10,
+  eyeColor = "white",
+  pupilColor = "black",
+  isBlinking = false,
+  forceLookX,
+  forceLookY
+}) => {
+  const [mouseX, setMouseX] = useState(0);
+  const [mouseY, setMouseY] = useState(0);
+  const eyeRef = useRef(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMouseX(e.clientX);
+      setMouseY(e.clientY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const calculatePupilPosition = () => {
+    if (!eyeRef.current) return { x: 0, y: 0 };
+
+    if (forceLookX !== undefined && forceLookY !== undefined) {
+      return { x: forceLookX, y: forceLookY };
+    }
+
+    const eye = eyeRef.current.getBoundingClientRect();
+    const eyeCenterX = eye.left + eye.width / 2;
+    const eyeCenterY = eye.top + eye.height / 2;
+
+    const deltaX = mouseX - eyeCenterX;
+    const deltaY = mouseY - eyeCenterY;
+    const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
+
+    const angle = Math.atan2(deltaY, deltaX);
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+
+    return { x, y };
+  };
+
+  const pupilPosition = calculatePupilPosition();
+
+  return (
+    <div
+      ref={eyeRef}
+      className="rounded-full flex items-center justify-center transition-all duration-150"
+      style={{
+        width: `${size}px`,
+        height: isBlinking ? '2px' : `${size}px`,
+        backgroundColor: eyeColor,
+        overflow: 'hidden',
+      }}
+    >
+      {!isBlinking && (
+        <div
+          className="rounded-full"
+          style={{
+            width: `${pupilSize}px`,
+            height: `${pupilSize}px`,
+            backgroundColor: pupilColor,
+            transform: `translate(${pupilPosition.x}px, ${pupilPosition.y}px)`,
+            transition: 'transform 0.1s ease-out',
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+const AnimatedCharacters = ({ className }) => {
+  const { userProfile, updateCharactersPosition } = useUser();
+  const [mouseX, setMouseX] = useState(0);
+  const [mouseY, setMouseY] = useState(0);
+  const [isPurpleBlinking, setIsPurpleBlinking] = useState(false);
+  const [isBlackBlinking, setIsBlackBlinking] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState(() => {
+    // Try localStorage first (works for all users)
+    const savedPosition = localStorage.getItem('charactersPosition');
+    if (savedPosition) {
+      try {
+        return JSON.parse(savedPosition);
+      } catch (e) {
+        return { x: 200, y: 200 };
+      }
+    }
+    // Fall back to user profile (for logged-in users)
+    return userProfile?.charactersPosition || { x: 200, y: 200 };
+  });
+  const [sizes, setSizes] = useState(() => {
+    const savedSizes = localStorage.getItem('charactersSizes');
+    if (savedSizes) {
+      try {
+        return JSON.parse(savedSizes);
+      } catch (e) {
+        return { purple: 120, black: 80, orange: 50, yellow: 70 };
+      }
+    }
+    return { purple: 120, black: 80, orange: 50, yellow: 70 };
+  });
+  const [purpleLeftEyePosition, setPurpleLeftEyePosition] = useState({ x: 0, y: 0 });
+  const purpleRef = useRef(null);
+  const blackRef = useRef(null);
+  const yellowRef = useRef(null);
+  const orangeRef = useRef(null);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMouseX(e.clientX);
+      setMouseY(e.clientY);
+      
+      if (isDragging) {
+        setPosition({
+          x: e.clientX - dragOffset.x,
+          y: e.clientY - dragOffset.y
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging, dragOffset]);
+
+  // Sync with user profile
+  useEffect(() => {
+    if (userProfile?.charactersPosition) {
+      setPosition(userProfile.charactersPosition);
+    }
+  }, [userProfile?.charactersPosition]);
+
+  // Save position changes to user profile (works for both logged in and logged out users)
+  useEffect(() => {
+    // Save to localStorage for immediate persistence
+    const savedPosition = JSON.parse(localStorage.getItem('charactersPosition') || '{"x":200,"y":200}');
+    
+    if (position.x !== savedPosition.x || position.y !== savedPosition.y) {
+      localStorage.setItem('charactersPosition', JSON.stringify(position));
+      
+      // If user is logged in, also save to server
+      if (userProfile) {
+        const timeoutId = setTimeout(() => {
+          updateCharactersPosition(position);
+        }, 500); // Delay to prevent rapid updates
+        
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  }, [position, userProfile, updateCharactersPosition]);
+
+  // Save sizes to localStorage
+  useEffect(() => {
+    localStorage.setItem('charactersSizes', JSON.stringify(sizes));
+  }, [sizes]);
+
+  // Randomly move purple character's left eye
+  useEffect(() => {
+    const getRandomPosition = () => {
+      const x = (Math.random() - 0.5) * 6; // -3 to 3
+      const y = (Math.random() - 0.5) * 6; // -3 to 3
+      return { x, y };
+    };
+
+    // Set initial random position
+    setPurpleLeftEyePosition(getRandomPosition());
+
+    // Update position every 2-4 seconds
+    const getRandomInterval = () => Math.random() * 2000 + 2000;
+
+    const updatePosition = () => {
+      setPurpleLeftEyePosition(getRandomPosition());
+      setTimeout(updatePosition, getRandomInterval());
+    };
+
+    const timeout = setTimeout(updatePosition, getRandomInterval());
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Blinking effects
+  useEffect(() => {
+    const getRandomBlinkInterval = () => Math.random() * 4000 + 3000;
+
+    const scheduleBlink = (setBlinking) => {
+      const blinkTimeout = setTimeout(() => {
+        setBlinking(true);
+        setTimeout(() => {
+          setBlinking(false);
+          scheduleBlink(setBlinking);
+        }, 150);
+      }, getRandomBlinkInterval());
+      return blinkTimeout;
+    };
+
+    const purpleTimeout = scheduleBlink(setIsPurpleBlinking);
+    const blackTimeout = scheduleBlink(setIsBlackBlinking);
+
+    return () => {
+      clearTimeout(purpleTimeout);
+      clearTimeout(blackTimeout);
+    };
+  }, []);
+
+  const calculatePosition = (ref) => {
+    if (!ref.current) return { faceX: 0, faceY: 0, bodySkew: 0 };
+
+    const rect = ref.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 3;
+
+    const deltaX = mouseX - centerX;
+    const deltaY = mouseY - centerY;
+
+    const faceX = Math.max(-15, Math.min(15, deltaX / 20));
+    const faceY = Math.max(-10, Math.min(10, deltaY / 30));
+    const bodySkew = Math.max(-6, Math.min(6, -deltaX / 120));
+
+    return { faceX, faceY, bodySkew };
+  };
+
+  const purplePos = calculatePosition(purpleRef);
+  const blackPos = calculatePosition(blackRef);
+  const yellowPos = calculatePosition(yellowRef);
+  const orangePos = calculatePosition(orangeRef);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+    setDragOffset({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+  };
+
+  const handleResizeMouseDown = (character, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startY = e.clientY;
+    const startSize = sizes[character];
+
+    const handleResizeMouseMove = (e) => {
+      const deltaY = e.clientY - startY;
+      const newSize = Math.max(30, Math.min(200, startSize - deltaY));
+      setSizes(prev => ({ ...prev, [character]: newSize }));
+    };
+
+    const handleResizeMouseUp = () => {
+      window.removeEventListener('mousemove', handleResizeMouseMove);
+      window.removeEventListener('mouseup', handleResizeMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleResizeMouseMove);
+    window.addEventListener('mouseup', handleResizeMouseUp);
+  };
+
+  return (
+    <div className={cn("relative w-full h-full", className)}>
+      
+      {/* Characters positioned beside each other - Draggable */}
+      <div 
+        ref={containerRef}
+        className="absolute flex items-end gap-4 cursor-move select-none"
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          transform: 'translate(-50%, 0)',
+          opacity: 1,
+          zIndex: 99999,
+          filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))',
+          pointerEvents: 'auto',
+        }}
+        onMouseDown={handleMouseDown}
+      >
+        
+        {/* Purple tall rectangle character */}
+        <div 
+          ref={purpleRef}
+          className="transition-all duration-700 ease-in-out relative"
+          style={{
+            width: '60px',
+            height: `${sizes.purple}px`,
+            backgroundColor: '#6C3FF5',
+            borderRadius: '10px 10px 0 0',
+            transform: `skewX(${purplePos.bodySkew}deg)`,
+            transformOrigin: 'bottom center',
+          }}
+        >
+          {/* Resize handle */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize z-10"
+            onMouseDown={(e) => handleResizeMouseDown('purple', e)}
+          />
+          {/* Eyes */}
+          <div 
+            className="absolute flex gap-2 transition-all duration-700 ease-in-out"
+            style={{
+              left: `${20 + purplePos.faceX}px`,
+              top: `${20 + purplePos.faceY}px`,
+            }}
+          >
+            <EyeBall 
+              size={12} 
+              pupilSize={4} 
+              maxDistance={3} 
+              eyeColor="white" 
+              pupilColor="#2D2D2D" 
+              isBlinking={isPurpleBlinking}
+              forceLookX={purpleLeftEyePosition.x}
+              forceLookY={purpleLeftEyePosition.y}
+            />
+            <EyeBall 
+              size={12} 
+              pupilSize={4} 
+              maxDistance={3} 
+              eyeColor="white" 
+              pupilColor="#2D2D2D" 
+              isBlinking={isPurpleBlinking}
+            />
+          </div>
+        </div>
+
+        {/* Black medium rectangle character */}
+        <div 
+          ref={blackRef}
+          className="transition-all duration-700 ease-in-out relative"
+          style={{
+            width: '40px',
+            height: `${sizes.black}px`,
+            backgroundColor: '#2D2D2D',
+            borderRadius: '8px 8px 0 0',
+            transform: `skewX(${blackPos.bodySkew}deg)`,
+            transformOrigin: 'bottom center',
+          }}
+        >
+          {/* Resize handle */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize z-10"
+            onMouseDown={(e) => handleResizeMouseDown('black', e)}
+          />
+          {/* Eyes */}
+          <div 
+            className="absolute flex gap-1 transition-all duration-700 ease-in-out"
+            style={{
+              left: `${12 + blackPos.faceX}px`,
+              top: `${15 + blackPos.faceY}px`,
+            }}
+          >
+            <EyeBall 
+              size={10} 
+              pupilSize={3} 
+              maxDistance={2} 
+              eyeColor="white" 
+              pupilColor="#2D2D2D" 
+              isBlinking={isBlackBlinking}
+            />
+            <EyeBall 
+              size={10} 
+              pupilSize={3} 
+              maxDistance={2} 
+              eyeColor="white" 
+              pupilColor="#2D2D2D" 
+              isBlinking={isBlackBlinking}
+            />
+          </div>
+        </div>
+
+        {/* Orange circle character */}
+        <div 
+          ref={orangeRef}
+          className="transition-all duration-700 ease-in-out relative"
+          style={{
+            width: '50px',
+            height: `${sizes.orange}px`,
+            backgroundColor: '#FF9B6B',
+            borderRadius: '50%',
+            transform: `skewX(${orangePos.bodySkew}deg)`,
+            transformOrigin: 'bottom center',
+          }}
+        >
+          {/* Resize handle */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize z-10"
+            onMouseDown={(e) => handleResizeMouseDown('orange', e)}
+          />
+          {/* Eyes - just pupils */}
+          <div 
+            className="absolute flex gap-2 transition-all duration-200 ease-out"
+            style={{
+              left: `${15 + orangePos.faceX}px`,
+              top: `${15 + orangePos.faceY}px`,
+            }}
+          >
+            <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
+            <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
+          </div>
+        </div>
+
+        {/* Yellow rounded rectangle character */}
+        <div 
+          ref={yellowRef}
+          className="transition-all duration-700 ease-in-out relative"
+          style={{
+            width: '45px',
+            height: `${sizes.yellow}px`,
+            backgroundColor: '#E8D754',
+            borderRadius: '22px 22px 0 0',
+            transform: `skewX(${yellowPos.bodySkew}deg)`,
+            transformOrigin: 'bottom center',
+          }}
+        >
+          {/* Resize handle */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize z-10"
+            onMouseDown={(e) => handleResizeMouseDown('yellow', e)}
+          />
+          {/* Eyes - just pupils */}
+          <div 
+            className="absolute flex gap-1 transition-all duration-200 ease-out"
+            style={{
+              left: `${15 + yellowPos.faceX}px`,
+              top: `${15 + yellowPos.faceY}px`,
+            }}
+          >
+            <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
+            <Pupil size={6} maxDistance={2} pupilColor="#2D2D2D" />
+          </div>
+          {/* Mouth */}
+          <div 
+            className="absolute w-8 h-1 bg-[#2D2D2D] rounded-full transition-all duration-200 ease-out"
+            style={{
+              left: `${12 + yellowPos.faceX}px`,
+              top: `${35 + yellowPos.faceY}px`,
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export { AnimatedCharacters };

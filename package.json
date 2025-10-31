@@ -1,0 +1,39 @@
+{
+  "name": "qa-tech-builder",
+  "version": "1.0.0",
+  "description": "A beautiful, minimal, and modern website for building QA testing technology combinations with smart filtering",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": [
+    "qa",
+    "testing",
+    "automation",
+    "mern",
+    "react",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "QA Tech Builder Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@21st-extension/react": "^0.5.14",
+    "@21st-extension/toolbar": "^0.5.14",
+    "@21st-extension/toolbar-react": "^0.5.14",
+    "concurrently": "^7.6.0"
+  }
+}
+
+
+
+
+
+
+
+
