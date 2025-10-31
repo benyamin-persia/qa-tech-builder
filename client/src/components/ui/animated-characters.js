@@ -713,7 +713,7 @@ const AnimatedCharacters = ({ className }) => {
             className="absolute -translate-x-1/2 z-[100000] pointer-events-none"
             style={{
               left: `${position.x}px`,
-              bottom: `${position.y + 160}px`,
+              top: `${position.y - 160}px`,
               translateX: tooltipTranslateX,
               rotate: tooltipRotate,
               whiteSpace: "nowrap",
