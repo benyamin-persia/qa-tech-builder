@@ -274,16 +274,16 @@ const AnimatedCharacters = ({ className }) => {
       return { x, y };
     };
 
-    const shouldLookAway = () => Math.random() < 0.15; // 15% chance
+    const shouldLookAway = () => Math.random() < 0.4; // 40% chance
 
     const scheduleLookAway = () => {
-      const getRandomInterval = () => Math.random() * 8000 + 4000; // 4-12 seconds
+      const getRandomInterval = () => Math.random() * 4000 + 2000; // 2-6 seconds
       
       const timeout = setTimeout(() => {
         if (shouldLookAway()) {
           setYellowLookAway(getLookAwayPosition());
-          // Look away for 200-500ms
-          const lookAwayDuration = Math.random() * 300 + 200;
+          // Look away for 400-800ms
+          const lookAwayDuration = Math.random() * 400 + 400;
           setTimeout(() => {
             setYellowLookAway({ x: 0, y: 0 });
           }, lookAwayDuration);
