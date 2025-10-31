@@ -748,7 +748,7 @@ const AnimatedCharacters = ({ className }) => {
         </div>
       </div>
 
-      {/* Speech Bubbles */}
+      {/* Speech Bubbles using DaisyUI chat */}
       {speakingCharacter && speechText && (
         <div 
           className="absolute z-[100000] pointer-events-none"
@@ -771,24 +771,26 @@ const AnimatedCharacters = ({ className }) => {
             }),
           }}
         >
-          {/* Speech bubble with tail */}
-          <div className="relative bg-white dark:bg-gray-800 rounded-2xl px-3 py-2 shadow-xl border-2 border-gray-300 dark:border-gray-600 max-w-[200px]">
-            {/* Tail pointing to character */}
-            {(speakingCharacter === 'purple' || speakingCharacter === 'orange') && (
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[1px]">
-                <div className="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px] border-l-white dark:border-l-gray-800" />
+          {(speakingCharacter === 'purple' || speakingCharacter === 'orange') && (
+            <div className="chat chat-start">
+              <div className={
+                speakingCharacter === 'purple' ? 'chat-bubble chat-bubble-primary' :
+                'chat-bubble chat-bubble-warning'
+              }>
+                {speechText}
               </div>
-            )}
-            {(speakingCharacter === 'black' || speakingCharacter === 'yellow') && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[1px]">
-                <div className="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[8px] border-r-white dark:border-r-gray-800" />
+            </div>
+          )}
+          {(speakingCharacter === 'black' || speakingCharacter === 'yellow') && (
+            <div className="chat chat-end">
+              <div className={
+                speakingCharacter === 'black' ? 'chat-bubble chat-bubble-neutral' :
+                'chat-bubble chat-bubble-accent'
+              }>
+                {speechText}
               </div>
-            )}
-            
-            <p className="text-sm text-gray-900 dark:text-white font-medium leading-tight">
-              {speechText}
-            </p>
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>
