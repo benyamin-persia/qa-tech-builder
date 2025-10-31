@@ -513,20 +513,22 @@ const AnimatedCharacters = ({ className }) => {
           />
           {/* Eyes - white circles behind glasses */}
           <div 
-            className="absolute flex gap-3 transition-all duration-200 ease-out"
+            className="absolute flex gap-0 transition-all duration-200 ease-out"
             style={{
-              left: `${38 + orangePos.faceX}px`,
+              left: `${32 + orangePos.faceX}px`,
               top: `${20 + orangePos.faceY}px`,
             }}
           >
             <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
-            <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
+            <div style={{ marginLeft: '8px' }}>
+              <EyeBall size={16} pupilSize={4} maxDistance={3} eyeColor="white" pupilColor="#2D2D2D" isBlinking={false} />
+            </div>
           </div>
           {/* Glasses - overlay on top of eyes */}
           <div 
             className="absolute transition-all duration-200 ease-out"
             style={{
-              left: `${38 + orangePos.faceX}px`,
+              left: `${32 + orangePos.faceX}px`,
               top: `${20 + orangePos.faceY}px`,
               zIndex: 10,
             }}
@@ -543,7 +545,7 @@ const AnimatedCharacters = ({ className }) => {
             <div 
               className="absolute border-2 border-[#2D2D2D] rounded-full bg-transparent"
               style={{
-                left: '20px',
+                left: '24px',
                 width: '16px',
                 height: '16px',
               }}
@@ -552,7 +554,7 @@ const AnimatedCharacters = ({ className }) => {
             <div 
               className="absolute bg-[#2D2D2D]"
               style={{
-                left: '14px',
+                left: '16px',
                 top: '7px',
                 width: '8px',
                 height: '2px',
