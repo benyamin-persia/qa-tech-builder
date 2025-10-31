@@ -519,8 +519,8 @@ const AnimatedCharacters = ({ className }) => {
               top: `${20 + orangePos.faceY}px`,
             }}
           >
-            <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
-            <Pupil size={4} maxDistance={2} pupilColor="#2D2D2D" />
+            <Pupil size={4} maxDistance={1} pupilColor="#2D2D2D" />
+            <Pupil size={4} maxDistance={1} pupilColor="#2D2D2D" />
           </div>
           {/* Glasses */}
           <div 
