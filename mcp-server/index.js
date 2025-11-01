@@ -92,6 +92,33 @@ async function generateAgentResponse(character, userMessage, context) {
   const agent = CHARACTER_AGENTS[character];
   if (!agent) return null;
 
+  // Try to get LLM response first
+  const prompt = `You are ${agent.name}, a ${agent.personality} QA Assistant specializing in ${agent.expertise}.
+  
+Your personality: ${agent.personality}
+Your tone: ${agent.tone}
+
+User asked: "${userMessage}"
+
+Website Context:
+- Available pages: ${KNOWLEDGE_BASE.pages.map(p => p.name).join(', ')}
+- Learning paths: ${KNOWLEDGE_BASE.learningPaths.map(p => p.name).join(', ')}
+- SQL tasks available: ${KNOWLEDGE_BASE.sqlTasks.length}
+- Technologies: ${Object.values(KNOWLEDGE_BASE.technologies).flat().slice(0, 5).join(', ')}
+
+Provide a helpful, friendly response in your personality. Be conversational and encouraging. Keep it under 150 words.`;
+
+  const llmResponse = await getLLMResponse(prompt, context);
+  
+  // If LLM is available, use it
+  if (llmResponse) {
+    return {
+      message: llmResponse,
+      suggestions: []
+    };
+  }
+
+  // Fall back to rule-based responses if LLM not available
   const lowerMessage = userMessage.toLowerCase();
 
   // Navigational help
