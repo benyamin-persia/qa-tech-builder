@@ -874,7 +874,7 @@ export default function SqlPlaygroundQA({ onProgressUpdate, showTetris = false }
       {/* Main Content */}
       <ResizablePanelGroup direction="horizontal" className="h-full">
         {/* Left Sidebar - Chapters & Tasks with Chat Tabs */}
-        <ResizablePanel defaultSize={20} minSize={10} maxSize={35}>
+        <ResizablePanel defaultSize={25} minSize={15} maxSize={45}>
           <div className="card h-full flex flex-col">
             {/* Tabs */}
             <div className="flex border-b border-white/10 mb-3">
