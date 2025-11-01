@@ -595,9 +595,10 @@ function ChatAssistant({ currentTask }) {
       // Include current task context in the request
       const taskContext = currentTask ? {
         title: currentTask.title,
-        description: currentTask.description,
+        description: currentTask.qaContext || currentTask.description,
         difficulty: currentTask.difficulty,
-        chapter: currentTask.chapter
+        chapter: currentTask.chapter,
+        prompt: currentTask.prompt
       } : null;
 
       const response = await sendMessage('purple', userMessage, {

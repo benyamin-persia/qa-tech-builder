@@ -104,6 +104,7 @@ async function generateAgentResponse(character, userMessage, context) {
   const taskContext = context.currentTask ? 
     `Current Task: "${context.currentTask.title}"
 Task Description: ${context.currentTask.description}
+Task Prompt: ${context.currentTask.prompt || 'N/A'}
 Difficulty: ${context.currentTask.difficulty}/5
 Chapter: ${context.currentTask.chapter}
 
@@ -149,7 +150,7 @@ Provide a helpful, friendly response in your personality. Be conversational and 
       lowerMessage.includes('current')
     )) {
     return {
-      message: `You're working on: **${context.currentTask.title}**\n\n${context.currentTask.description}\n\nThis is a ${context.currentTask.difficulty}/5 difficulty task from Chapter ${context.currentTask.chapter}. Need help getting started?`,
+      message: `You're working on: **${context.currentTask.title}**\n\n${context.currentTask.description}\n\n📋 **Task:** ${context.currentTask.prompt || 'Complete this task'}\n\nThis is a ${context.currentTask.difficulty}/5 difficulty task from Chapter ${context.currentTask.chapter}. Need help getting started?`,
       suggestions: []
     };
   }
