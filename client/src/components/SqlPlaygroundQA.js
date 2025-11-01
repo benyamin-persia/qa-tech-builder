@@ -575,7 +575,7 @@ ORDER BY execution_time_ms DESC;`,
 ];
 
 // Chat Assistant Component for SQL Lab
-function ChatAssistant() {
+function ChatAssistant({ currentTask }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -592,10 +592,19 @@ function ChatAssistant() {
     setMessages(prev => [...prev, { from: 'user', text: userMessage }]);
 
     try {
+      // Include current task context in the request
+      const taskContext = currentTask ? {
+        title: currentTask.title,
+        description: currentTask.description,
+        difficulty: currentTask.difficulty,
+        chapter: currentTask.chapter
+      } : null;
+
       const response = await sendMessage('purple', userMessage, {
         currentPage: window.location.pathname,
         selections: selections,
-        progress: progress
+        progress: progress,
+        currentTask: taskContext
       });
       
       setMessages(prev => [...prev, { from: 'ai', text: response.response }]);
@@ -619,7 +628,7 @@ function ChatAssistant() {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col h-full space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded-full bg-[#6C3FF5]"></div>
@@ -633,7 +642,7 @@ function ChatAssistant() {
         </button>
       </div>
       
-      <div className="bg-white/5 rounded-lg p-2 max-h-40 overflow-y-auto space-y-2">
+      <div className="flex-1 bg-white/5 rounded-lg p-2 overflow-y-auto space-y-2 min-h-0">
         {messages.length === 0 ? (
           <div className="text-center text-white/50 text-xs py-2">
             Ask me anything about SQL or QA testing!
@@ -934,7 +943,7 @@ export default function SqlPlaygroundQA({ onProgressUpdate, showTetris = false }
         {/* Center - Task & Editor */}
         <ResizablePanel defaultSize={50} minSize={30} maxSize={70}>
           {currentTask && (
-            <div className="card h-full">
+            <div className="card h-full flex flex-col">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1" style={{ fontSize: `${14 * centerScale}px` }}>
                   <h3 className="text-sm font-bold text-white mb-1">{currentTask.title}</h3>
@@ -1054,8 +1063,8 @@ export default function SqlPlaygroundQA({ onProgressUpdate, showTetris = false }
               </div>
 
               {/* AI Chat Assistant */}
-              <div className="border-t border-white/10 pt-3 mt-4">
-                <ChatAssistant />
+              <div className="border-t border-white/10 pt-3 mt-4 flex-1 flex flex-col min-h-0">
+                <ChatAssistant currentTask={currentTask} />
               </div>
             </div>
           )}

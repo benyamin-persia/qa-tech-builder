@@ -100,6 +100,15 @@ async function generateAgentResponse(character, userMessage, context) {
       .map(([key, value]) => `${key.replace(/([A-Z])/g, ' $1').trim()}: ${value}`)
       .join(', ') : 'None selected yet';
   
+  // Add current task context if available
+  const taskContext = context.currentTask ? 
+    `Current Task: "${context.currentTask.title}"
+Task Description: ${context.currentTask.description}
+Difficulty: ${context.currentTask.difficulty}/5
+Chapter: ${context.currentTask.chapter}
+
+` : '';
+
   const prompt = `You are ${agent.name}, a ${agent.personality} QA Assistant specializing in ${agent.expertise}.
   
 Your personality: ${agent.personality}
@@ -107,7 +116,7 @@ Your tone: ${agent.tone}
 
 User asked: "${userMessage}"
 
-Website Context:
+${taskContext}Website Context:
 - Available pages: ${KNOWLEDGE_BASE.pages.map(p => p.name).join(', ')}
 - Learning paths: ${KNOWLEDGE_BASE.learningPaths.map(p => p.name).join(', ')}
 - SQL tasks available: ${KNOWLEDGE_BASE.sqlTasks.length}
@@ -115,7 +124,7 @@ Website Context:
 
 User's Selected Tech Stack: ${userTechStack}
 
-Provide a helpful, friendly response in your personality. Be conversational and encouraging. If the user asks about their selections, reference their actual tech stack. Keep it under 150 words.`;
+Provide a helpful, friendly response in your personality. Be conversational and encouraging. If the user asks about the current task or their selections, reference the actual context. Keep it under 150 words.`;
 
   const llmResponse = await getLLMResponse(prompt, context);
   
@@ -129,6 +138,21 @@ Provide a helpful, friendly response in your personality. Be conversational and 
 
   // Fall back to rule-based responses if LLM not available
   const lowerMessage = userMessage.toLowerCase();
+
+  // Check if user is asking about current task
+  if (context.currentTask && (
+      lowerMessage.includes('question') || 
+      lowerMessage.includes('current task') || 
+      lowerMessage.includes('what should i do') ||
+      lowerMessage.includes('what am i working on') ||
+      lowerMessage.includes('task') ||
+      lowerMessage.includes('current')
+    )) {
+    return {
+      message: `You're working on: **${context.currentTask.title}**\n\n${context.currentTask.description}\n\nThis is a ${context.currentTask.difficulty}/5 difficulty task from Chapter ${context.currentTask.chapter}. Need help getting started?`,
+      suggestions: []
+    };
+  }
 
   // Check if user is asking about their tech stack
   if (lowerMessage.includes('technology') && (lowerMessage.includes('choose') || lowerMessage.includes('select') || lowerMessage.includes('pick') || lowerMessage.includes('tutorial') || lowerMessage.includes('what'))) {
