@@ -944,7 +944,7 @@ const AnimatedCharacters = ({ className }) => {
                       : 'bg-yellow-100 dark:bg-yellow-900 text-gray-900 dark:text-white'
                   }`}
                 >
-                  <div className="text-sm prose prose-sm max-w-none dark:prose-invert">
+                  <div className="text-xs prose prose-xs max-w-none dark:prose-invert">
                     <ReactMarkdown
                       components={{
                         code({node, inline, className, children, ...props}) {
