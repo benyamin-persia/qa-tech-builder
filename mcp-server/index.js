@@ -202,7 +202,7 @@ app.post('/api/agent/chat', async (req, res) => {
     }
 
     const userContext = contextManager.getSession(userId);
-    const response = generateAgentResponse(character, message, { ...userContext, ...context });
+    const response = await generateAgentResponse(character, message, { ...userContext, ...context });
 
     // Store conversation
     contextManager.addConversation(userId, character, message, response.message);
