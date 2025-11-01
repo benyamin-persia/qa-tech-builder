@@ -74,7 +74,10 @@ async function getLLMResponse(prompt, context) {
     const response = await axios.post('http://localhost:11434/api/generate', {
       model: 'llama3.2', // or your preferred model
       prompt: prompt,
-      stream: false
+      stream: false,
+      options: {
+        num_predict: 150  // Limit to ~150 tokens (approx 100-120 words)
+      }
     }, {
       timeout: 10000 // 10 second timeout
     });
