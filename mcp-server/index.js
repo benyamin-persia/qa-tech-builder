@@ -72,7 +72,7 @@ async function getLLMResponse(prompt, context) {
   try {
     // Check if Ollama is running locally
     const response = await axios.post('http://localhost:11434/api/generate', {
-      model: 'llama3.2', // or your preferred model
+      model: 'mistral', // Mistral 7B - better reasoning
       prompt: prompt,
       stream: false
     }, {
