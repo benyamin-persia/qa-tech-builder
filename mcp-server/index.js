@@ -93,6 +93,13 @@ async function generateAgentResponse(character, userMessage, context) {
   if (!agent) return null;
 
   // Try to get LLM response first
+  // Build user's tech stack info
+  const userTechStack = context.selections ? 
+    Object.entries(context.selections.data || {})
+      .filter(([_, value]) => value && value !== '')
+      .map(([key, value]) => `${key.replace(/([A-Z])/g, ' $1').trim()}: ${value}`)
+      .join(', ') : 'None selected yet';
+  
   const prompt = `You are ${agent.name}, a ${agent.personality} QA Assistant specializing in ${agent.expertise}.
   
 Your personality: ${agent.personality}
@@ -106,7 +113,9 @@ Website Context:
 - SQL tasks available: ${KNOWLEDGE_BASE.sqlTasks.length}
 - Technologies: ${Object.values(KNOWLEDGE_BASE.technologies).flat().slice(0, 5).join(', ')}
 
-Provide a helpful, friendly response in your personality. Be conversational and encouraging. Keep it under 150 words.`;
+User's Selected Tech Stack: ${userTechStack}
+
+Provide a helpful, friendly response in your personality. Be conversational and encouraging. If the user asks about their selections, reference their actual tech stack. Keep it under 150 words.`;
 
   const llmResponse = await getLLMResponse(prompt, context);
   
@@ -120,6 +129,21 @@ Provide a helpful, friendly response in your personality. Be conversational and 
 
   // Fall back to rule-based responses if LLM not available
   const lowerMessage = userMessage.toLowerCase();
+
+  // Check if user is asking about their tech stack
+  if (lowerMessage.includes('technology') && (lowerMessage.includes('choose') || lowerMessage.includes('select') || lowerMessage.includes('pick') || lowerMessage.includes('tutorial') || lowerMessage.includes('what'))) {
+    if (userTechStack !== 'None selected yet' && Object.keys(context.selections?.data || {}).some(key => context.selections.data[key] && context.selections.data[key] !== '')) {
+      return {
+        message: `Based on what you've selected in the Technology Builder, your tech stack includes: ${userTechStack}. Great choices! Want to refine your stack or start learning?`,
+        suggestions: [{ text: 'Open Technology Builder', action: 'navigate', path: '/builder' }, { text: 'Start Learning', action: 'navigate', path: '/tutorial' }]
+      };
+    } else {
+      return {
+        message: `You haven't selected any technologies yet! Let's build your perfect QA tech stack. Would you like to explore the Technology Builder?`,
+        suggestions: [{ text: 'Open Technology Builder', action: 'navigate', path: '/builder' }]
+      };
+    }
+  }
 
   // Navigational help
   if (lowerMessage.includes('navigate') || lowerMessage.includes('go to') || lowerMessage.includes('page')) {

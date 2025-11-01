@@ -144,7 +144,7 @@ const EyeBall = ({
 };
 
 const AnimatedCharacters = ({ className }) => {
-  const { userProfile, updateCharactersPosition } = useUser();
+  const { userProfile, updateCharactersPosition, selections, progress } = useUser();
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0);
   const [isPurpleBlinking, setIsPurpleBlinking] = useState(false);
@@ -536,7 +536,9 @@ const AnimatedCharacters = ({ className }) => {
 
     try {
       const response = await sendMessage(chatCharacter, userMessage, {
-        currentPage: window.location.pathname
+        currentPage: window.location.pathname,
+        selections: selections,
+        progress: progress
       });
       
       setChatMessages(prev => [...prev, { from: chatCharacter, text: response.response }]);
