@@ -12,6 +12,10 @@ import {
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import axios from 'axios';
+
+// Import shared data
+import { KNOWLEDGE_BASE, CHARACTER_AGENTS } from './shared-data.js';
 
 dotenv.config();
 
@@ -21,69 +25,6 @@ const PORT = process.env.MCP_PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Character Agents Configuration
-const CHARACTER_AGENTS = {
-  purple: {
-    name: 'Blue',
-    personality: 'Optimistic and encouraging',
-    expertise: 'SQL basics, data validation, test planning',
-    tone: 'Friendly and supportive, uses emojis 😊',
-    color: 'primary'
-  },
-  orange: {
-    name: 'Orange',
-    personality: 'Analytical and methodical',
-    expertise: 'API testing, debugging, troubleshooting',
-    tone: 'Professional and detail-oriented 🔍',
-    color: 'warning'
-  },
-  black: {
-    name: 'Black',
-    personality: 'Energetic and confident',
-    expertise: 'Automation, CI/CD, test frameworks',
-    tone: 'Enthusiastic and motivating 💪',
-    color: 'neutral'
-  },
-  yellow: {
-    name: 'Yellow',
-    personality: 'Friendly and helpful',
-    expertise: 'QA fundamentals, best practices, mentoring',
-    tone: 'Cheerful and encouraging 🌟',
-    color: 'accent'
-  }
-};
-
-// Knowledge base for website navigation and learning paths
-const KNOWLEDGE_BASE = {
-  pages: [
-    { name: 'Landing Page', path: '/', description: 'Main entry point to explore QA technologies' },
-    { name: 'Technology Builder', path: '/builder', description: 'Build custom QA tech stacks' },
-    { name: 'Tutorial Page', path: '/tutorial', description: 'View selected learning path' },
-    { name: 'SQL Lab', path: '/sql', description: 'Interactive SQL practice for QA testers' }
-  ],
-  learningPaths: [
-    { id: 'manual', name: 'Manual QA Tester', skills: ['Exploratory testing', 'Bug tracking', 'Test case design'] },
-    { id: 'automation', name: 'Automation Engineer', skills: ['Selenium', 'Test frameworks', 'CI/CD'] },
-    { id: 'api', name: 'API Tester', skills: ['REST APIs', 'Postman', 'Test automation'] },
-    { id: 'performance', name: 'Performance Tester', skills: ['Load testing', 'JMeter', 'Optimization'] },
-    { id: 'security', name: 'Security Tester', skills: ['Vulnerability testing', 'OWASP', 'Penetration testing'] }
-  ],
-  technologies: {
-    languages: ['Java', 'Python', 'JavaScript', 'TypeScript'],
-    uiTesting: ['Selenium', 'Playwright', 'Cypress'],
-    apiTesting: ['REST Assured', 'Karate', 'Postman', 'Supertest'],
-    frameworks: ['TestNG', 'JUnit', 'pytest', 'Jest'],
-    databases: ['PostgreSQL', 'MySQL', 'MongoDB'],
-    cicd: ['Jenkins', 'GitHub Actions', 'CircleCI']
-  },
-  sqlTasks: [
-    { id: 1, title: 'Verify Test Users', chapter: 1, difficulty: 1 },
-    { id: 2, title: 'Check Active Products', chapter: 1, difficulty: 1 },
-    { id: 3, title: 'Find Data Quality Issues', chapter: 2, difficulty: 2 },
-    { id: 4, title: 'Validate Order Totals', chapter: 2, difficulty: 2 }
-  ]
-};
 
 // Context Manager for user interactions
 class ContextManager {
@@ -126,8 +67,28 @@ class ContextManager {
 
 const contextManager = new ContextManager();
 
+// Helper function to get LLM response from Ollama
+async function getLLMResponse(prompt, context) {
+  try {
+    // Check if Ollama is running locally
+    const response = await axios.post('http://localhost:11434/api/generate', {
+      model: 'llama3.2', // or your preferred model
+      prompt: prompt,
+      stream: false
+    }, {
+      timeout: 10000 // 10 second timeout
+    });
+    
+    return response.data.response;
+  } catch (error) {
+    // If Ollama is not available, return null to use fallback
+    console.log('Ollama not available, using rule-based responses:', error.message);
+    return null;
+  }
+}
+
 // Generate AI response based on character and context
-function generateAgentResponse(character, userMessage, context) {
+async function generateAgentResponse(character, userMessage, context) {
   const agent = CHARACTER_AGENTS[character];
   if (!agent) return null;
 
