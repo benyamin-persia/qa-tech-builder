@@ -63,6 +63,14 @@ export const KNOWLEDGE_BASE = {
     { id: 2, title: 'Check Active Products', chapter: 1, difficulty: 1 },
     { id: 3, title: 'Find Data Quality Issues', chapter: 2, difficulty: 2 },
     { id: 4, title: 'Validate Order Totals', chapter: 2, difficulty: 2 }
-  ]
+  ],
+  databaseSchema: {
+    customers: 'customer_id, email, first_name, last_name, created_at, status, last_login, test_user',
+    products: 'product_id, sku, name, price, category, stock_quantity, active, created_at',
+    orders: 'order_id, customer_id, order_date, status, total_amount, shipping_address',
+    order_items: 'order_item_id, order_id, product_id, quantity, unit_price, subtotal',
+    payments: 'payment_id, order_id, payment_method, amount, status, transaction_date',
+    test_results: 'test_run_id, test_name, executed_at, passed, failure_reason, execution_time_ms'
+  }
 };
 

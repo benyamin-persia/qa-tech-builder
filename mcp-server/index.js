@@ -110,11 +110,19 @@ Chapter: ${context.currentTask.chapter}
 
 ` : '';
 
+  // Build database schema context
+  const schemaContext = Object.entries(KNOWLEDGE_BASE.databaseSchema || {})
+    .map(([table, columns]) => `${table}(${columns})`)
+    .join('\n');
+
   const prompt = `You are ${agent.name}, a QA SQL Assistant. Answer directly and concisely. NO greetings, NO small talk, NO emojis, NO asking what they're doing. Just answer the question.
 
 ${taskContext ? `IMPORTANT: The user is currently working on this task:
 ${taskContext}
 Answer questions about "current task" or "question" using THIS specific task info.` : ''}
+
+Database Schema:
+${schemaContext}
 
 User's Tech Stack: ${userTechStack}
 
@@ -123,7 +131,7 @@ User asked: "${userMessage}"
 RULES:
 1. If asked "what is the question" or "current question", respond with ONLY the task prompt from above.
 2. Be direct and brief - maximum 2 sentences.
-3. If providing SQL code, show it simply without explanation.
+3. If providing SQL code, use CORRECT table/column names from schema above.
 4. NO greetings like "Hello", "Hey there", "Great to see you".
 5. NO encouragement like "Keep up the work", "Happy coding", etc.
 6. Just answer. Nothing else.`;
