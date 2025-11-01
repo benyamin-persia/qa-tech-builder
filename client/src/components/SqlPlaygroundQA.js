@@ -2,6 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from './ui/resizable';
 import TetrisGame from './ui/TetrisGame';
+import useCharacterAgent from '../hooks/useCharacterAgent';
+import { useUser } from '../contexts/UserContext';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 /**
  * SQL for QA Testers - Learning Platform
@@ -569,6 +574,146 @@ ORDER BY execution_time_ms DESC;`,
   }
 ];
 
+// Chat Assistant Component for SQL Lab
+function ChatAssistant() {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { selections, progress } = useUser();
+  const userId = 'guest';
+  const { sendMessage, isLoading } = useCharacterAgent(userId);
+
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { from: 'user', text: userMessage }]);
+
+    try {
+      const response = await sendMessage('purple', userMessage, {
+        currentPage: window.location.pathname,
+        selections: selections,
+        progress: progress
+      });
+      
+      setMessages(prev => [...prev, { from: 'ai', text: response.response }]);
+      setIsExpanded(true); // Auto-expand when receiving message
+    } catch (error) {
+      console.error('Chat error:', error);
+      setMessages(prev => [...prev, { from: 'ai', text: 'Sorry, I encountered an error. Please try again.' }]);
+    }
+  };
+
+  if (!isExpanded && messages.length === 0) {
+    return (
+      <button
+        onClick={() => setIsExpanded(true)}
+        className="w-full text-left text-xs text-white/70 hover:text-white flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
+      >
+        <span className="text-lg">💬</span>
+        <span>Ask Blue for SQL help...</span>
+      </button>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded-full bg-[#6C3FF5]"></div>
+          <span className="text-xs text-white font-semibold">Blue - SQL Assistant</span>
+        </div>
+        <button
+          onClick={() => setIsExpanded(false)}
+          className="text-white/50 hover:text-white text-xs"
+        >
+          ✕
+        </button>
+      </div>
+      
+      <div className="bg-white/5 rounded-lg p-2 max-h-40 overflow-y-auto space-y-2">
+        {messages.length === 0 ? (
+          <div className="text-center text-white/50 text-xs py-2">
+            Ask me anything about SQL or QA testing!
+          </div>
+        ) : (
+          messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[80%] rounded px-2 py-1 text-xs ${
+                  msg.from === 'user'
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-white/10 text-white'
+                }`}
+              >
+                <div className="prose prose-xs max-w-none dark:prose-invert">
+                  <ReactMarkdown
+                    components={{
+                      code({node, inline, className, children, ...props}) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline && match ? (
+                          <SyntaxHighlighter
+                            style={vscDarkPlus}
+                            language={match[1]}
+                            PreTag="div"
+                            {...props}
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code className="bg-white/20 px-1 rounded text-xs" {...props}>
+                            {children}
+                          </code>
+                        );
+                      }
+                    }}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-white/10 rounded px-2 py-1">
+              <div className="flex gap-1">
+                <div className="w-1 h-1 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-1 h-1 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-1 h-1 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex gap-1">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type your question..."
+          className="flex-1 bg-white/10 border border-white/20 text-white text-xs rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-white/50"
+          disabled={isLoading}
+        />
+        <button
+          type="submit"
+          disabled={isLoading || !input.trim()}
+          className="bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-600 text-white text-xs px-3 py-1 rounded transition-colors"
+        >
+          Send
+        </button>
+      </form>
+    </div>
+  );
+}
+
 export default function SqlPlaygroundQA({ onProgressUpdate, showTetris = false }) {
   const [SQL, setSQL] = useState(null);
   const dbRef = useRef(null);
@@ -906,6 +1051,11 @@ export default function SqlPlaygroundQA({ onProgressUpdate, showTetris = false }
                 >
                   Next →
                 </button>
+              </div>
+
+              {/* AI Chat Assistant */}
+              <div className="border-t border-white/10 pt-3 mt-4">
+                <ChatAssistant />
               </div>
             </div>
           )}

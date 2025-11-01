@@ -74,10 +74,7 @@ async function getLLMResponse(prompt, context) {
     const response = await axios.post('http://localhost:11434/api/generate', {
       model: 'llama3.2', // or your preferred model
       prompt: prompt,
-      stream: false,
-      options: {
-        num_predict: 150  // Limit to ~150 tokens (approx 100-120 words)
-      }
+      stream: false
     }, {
       timeout: 10000 // 10 second timeout
     });
@@ -118,7 +115,7 @@ Website Context:
 
 User's Selected Tech Stack: ${userTechStack}
 
-Provide a CONCISE, helpful response (max 50 words). Be brief, friendly, and encouraging. Use 1-2 emojis max.`;
+Provide a helpful, friendly response in your personality. Be conversational and encouraging. If the user asks about their selections, reference their actual tech stack. Keep it under 150 words.`;
 
   const llmResponse = await getLLMResponse(prompt, context);
   
