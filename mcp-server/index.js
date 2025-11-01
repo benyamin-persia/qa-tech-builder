@@ -151,11 +151,22 @@ function generateAgentResponse(character, userMessage, context) {
     };
   }
 
-  // SQL Lab help
+  // SQL Lab help and SQL query examples
+  if (lowerMessage.includes('select query') || lowerMessage.includes('example of select') || lowerMessage.includes('sql example')) {
+    const example = agent.name === 'Orange' ? 
+      'SELECT customer_id, first_name, email FROM customers WHERE test_user = 1;' :
+      'SELECT * FROM products WHERE active = 1;';
+    
+    return {
+      message: `Here's a basic SELECT query example:\n\`\`\`sql\n${example}\n\`\`\`\n\nThis query retrieves data from a table. Would you like to practice more in the SQL Lab?`,
+      suggestions: [{ text: 'Open SQL Lab', action: 'navigate', path: '/sql' }]
+    };
+  }
+
   if (lowerMessage.includes('sql') || lowerMessage.includes('database') || lowerMessage.includes('query')) {
     return {
-      message: `Our SQL Lab has ${KNOWLEDGE_BASE.sqlTasks.length} tasks to practice! Start with basic queries and work your way up. Need help with a specific task?`,
-      suggestions: [{ text: 'Open SQL Lab', action: 'navigate', path: '/sql' }]
+      message: `Our SQL Lab has ${KNOWLEDGE_BASE.sqlTasks.length} tasks to practice! Start with basic queries and work your way up. Want a SELECT query example?`,
+      suggestions: [{ text: 'Open SQL Lab', action: 'navigate', path: '/sql' }, { text: 'Show SQL example', action: 'help', type: 'sql-example' }]
     };
   }
 
@@ -184,13 +195,32 @@ function generateAgentResponse(character, userMessage, context) {
     };
   }
 
+  // Specific QA questions
+  if (lowerMessage.includes('what is') && lowerMessage.includes('qa') || lowerMessage.includes('quality assurance')) {
+    return {
+      message: `QA (Quality Assurance) is the systematic process of ensuring software meets quality standards. It involves testing, bug tracking, and verification to prevent defects in production. Would you like to explore our learning paths?`,
+      suggestions: [{ text: 'Learning paths', action: 'help', type: 'paths' }]
+    };
+  }
+
+  if (lowerMessage.includes('how to') && lowerMessage.includes('test')) {
+    const guide = agent.name === 'Blue' ? 
+      'Start by understanding requirements, create test cases, execute them, report bugs, and verify fixes.' :
+      'Plan tests, write test cases, execute systematically, track defects, and validate outcomes. Want to practice in our SQL Lab?';
+    
+    return {
+      message: guide,
+      suggestions: [{ text: 'Open SQL Lab', action: 'navigate', path: '/sql' }]
+    };
+  }
+
   // General encouragement
   return {
-    message: `I'm here to help you succeed in QA testing! ${agent.tone} You can ask me about navigation, learning paths, SQL practice, or anything about quality assurance testing.`,
+    message: `I'm here to help you succeed in QA testing! ${agent.tone} You can ask me about SQL queries, testing basics, navigation, or learning paths.`,
     suggestions: [
-      { text: 'Navigate website', action: 'help', type: 'navigation' },
+      { text: 'SQL query example', action: 'help', type: 'sql-example' },
       { text: 'Learning paths', action: 'help', type: 'paths' },
-      { text: 'SQL Lab', action: 'help', type: 'sql' }
+      { text: 'Testing basics', action: 'help', type: 'basics' }
     ]
   };
 }
