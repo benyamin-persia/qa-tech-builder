@@ -151,8 +151,14 @@ function generateAgentResponse(character, userMessage, context) {
     };
   }
 
-  // SQL Lab help and SQL query examples
-  if (lowerMessage.includes('select query') || lowerMessage.includes('example of select') || lowerMessage.includes('sql example')) {
+  // SQL Lab help and SQL query examples - specific patterns first
+  if ((lowerMessage.includes('create') && lowerMessage.includes('sql')) || 
+      lowerMessage.includes('select query') || 
+      lowerMessage.includes('example of select') || 
+      lowerMessage.includes('sql example') ||
+      lowerMessage.includes('simple sql') ||
+      (lowerMessage.includes('sql') && lowerMessage.includes('write')) ||
+      (lowerMessage.includes('query') && lowerMessage.includes('write'))) {
     const example = agent.name === 'Orange' ? 
       'SELECT customer_id, first_name, email FROM customers WHERE test_user = 1;' :
       'SELECT * FROM products WHERE active = 1;';
