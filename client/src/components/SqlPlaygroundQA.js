@@ -578,7 +578,6 @@ ORDER BY execution_time_ms DESC;`,
 function ChatAssistant({ currentTask }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [isExpanded, setIsExpanded] = useState(false);
   const { selections, progress } = useUser();
   const userId = 'guest';
   const { sendMessage, isLoading } = useCharacterAgent(userId);
@@ -609,38 +608,17 @@ function ChatAssistant({ currentTask }) {
       });
       
       setMessages(prev => [...prev, { from: 'ai', text: response.response }]);
-      setIsExpanded(true); // Auto-expand when receiving message
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { from: 'ai', text: 'Sorry, I encountered an error. Please try again.' }]);
     }
   };
 
-  if (!isExpanded && messages.length === 0) {
-    return (
-      <button
-        onClick={() => setIsExpanded(true)}
-        className="w-full text-left text-xs text-white/70 hover:text-white flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
-      >
-        <span className="text-lg">💬</span>
-        <span>Ask Blue for SQL help...</span>
-      </button>
-    );
-  }
-
   return (
     <div className="flex flex-col h-full space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-full bg-[#6C3FF5]"></div>
-          <span className="text-xs text-white font-semibold">Blue - SQL Assistant</span>
-        </div>
-        <button
-          onClick={() => setIsExpanded(false)}
-          className="text-white/50 hover:text-white text-xs"
-        >
-          ✕
-        </button>
+      <div className="flex items-center gap-2">
+        <div className="w-4 h-4 rounded-full bg-[#6C3FF5]"></div>
+        <span className="text-xs text-white font-semibold">Blue - SQL Assistant</span>
       </div>
       
       <div className="flex-1 bg-white/5 rounded-lg p-2 overflow-y-auto space-y-2 min-h-0">
@@ -738,6 +716,9 @@ export default function SqlPlaygroundQA({ onProgressUpdate, showTetris = false }
   const [centerScale, setCenterScale] = useState(1);
   const [rightScale, setRightScale] = useState(1);
   const clampScale = (v) => Math.min(1.5, Math.max(0.8, Number.isFinite(v) ? v : 1));
+  
+  // Left sidebar tab state
+  const [leftTab, setLeftTab] = useState('chapters');
   
   // Learning model state
   const [showSolution, setShowSolution] = useState(false);
@@ -892,50 +873,85 @@ export default function SqlPlaygroundQA({ onProgressUpdate, showTetris = false }
     <div className="w-full h-full relative">
       {/* Main Content */}
       <ResizablePanelGroup direction="horizontal" className="h-full">
-        {/* Left Sidebar - Chapters & Tasks */}
+        {/* Left Sidebar - Chapters & Tasks with Chat Tabs */}
         <ResizablePanel defaultSize={20} minSize={10} maxSize={35}>
           <div className="card h-full flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-semibold">Chapters & Tasks</h3>
-              <div className="flex items-center gap-2">
-                {onProgressUpdate && (
-                  <div className="text-white/70 text-xs">
-                    {completedTasks.length}/{QA_TASKS.length} ({Math.round((completedTasks.length / QA_TASKS.length) * 100)}%)
-                  </div>
-                )}
-                <div className="flex items-center gap-0.5">
-                  <button className="text-white/70 hover:text-white text-[10px] w-4 h-4 flex items-center justify-center" onClick={() => setLeftScale(s => clampScale(s - 0.1))}>−</button>
-                  <button className="text-white/70 hover:text-white text-[10px] w-4 h-4 flex items-center justify-center" onClick={() => setLeftScale(s => clampScale(s + 0.1))}>+</button>
-                </div>
-              </div>
+            {/* Tabs */}
+            <div className="flex border-b border-white/10 mb-3">
+              <button
+                onClick={() => setLeftTab('chapters')}
+                className={`flex-1 px-3 py-2 text-sm font-medium transition-colors ${
+                  leftTab === 'chapters'
+                    ? 'text-white border-b-2 border-blue-400'
+                    : 'text-white/60 hover:text-white'
+                }`}
+              >
+                Chapters
+              </button>
+              <button
+                onClick={() => setLeftTab('chat')}
+                className={`flex-1 px-3 py-2 text-sm font-medium transition-colors ${
+                  leftTab === 'chat'
+                    ? 'text-white border-b-2 border-blue-400'
+                    : 'text-white/60 hover:text-white'
+                }`}
+              >
+                Chat
+              </button>
             </div>
-            <div className="space-y-2 overflow-y-auto flex-1" style={{ fontSize: `${8 * leftScale}px` }}>
-              {CHAPTERS.map(chapter => {
-                const chapterTasks = QA_TASKS.filter(t => t.chapter === chapter.id);
-                return (
-                  <div key={chapter.id} className="border-b border-white/10 pb-2 mb-2">
-                    <div className="text-white/80 font-medium mb-1">
-                      Ch {chapter.id}: {chapter.title}
+
+            {/* Tab Content */}
+            {leftTab === 'chapters' && (
+              <>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-white font-semibold text-xs">Tasks</h3>
+                  <div className="flex items-center gap-2">
+                    {onProgressUpdate && (
+                      <div className="text-white/70 text-xs">
+                        {completedTasks.length}/{QA_TASKS.length} ({Math.round((completedTasks.length / QA_TASKS.length) * 100)}%)
+                      </div>
+                    )}
+                    <div className="flex items-center gap-0.5">
+                      <button className="text-white/70 hover:text-white text-[10px] w-4 h-4 flex items-center justify-center" onClick={() => setLeftScale(s => clampScale(s - 0.1))}>−</button>
+                      <button className="text-white/70 hover:text-white text-[10px] w-4 h-4 flex items-center justify-center" onClick={() => setLeftScale(s => clampScale(s + 0.1))}>+</button>
                     </div>
-                    {chapterTasks.map((task, idx) => (
-                      <button
-                        key={task.id}
-                        onClick={() => loadTask(QA_TASKS.indexOf(task))}
-                        className={`w-full text-left px-2 py-1 rounded transition-all mb-1 ${
-                          QA_TASKS.indexOf(task) === taskIndex
-                            ? 'bg-blue-500/30 border border-blue-400 text-white'
-                            : completedTasks.includes(task.id)
-                            ? 'bg-green-500/20 text-green-300 hover:bg-green-500/30'
-                            : 'text-white/60 hover:bg-white/10'
-                        }`}
-                      >
-                        {completedTasks.includes(task.id) ? '✓ ' : ''}{idx + 1}. {task.title}
-                      </button>
-                    ))}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+                <div className="space-y-2 overflow-y-auto flex-1" style={{ fontSize: `${8 * leftScale}px` }}>
+                  {CHAPTERS.map(chapter => {
+                    const chapterTasks = QA_TASKS.filter(t => t.chapter === chapter.id);
+                    return (
+                      <div key={chapter.id} className="border-b border-white/10 pb-2 mb-2">
+                        <div className="text-white/80 font-medium mb-1">
+                          Ch {chapter.id}: {chapter.title}
+                        </div>
+                        {chapterTasks.map((task, idx) => (
+                          <button
+                            key={task.id}
+                            onClick={() => loadTask(QA_TASKS.indexOf(task))}
+                            className={`w-full text-left px-2 py-1 rounded transition-all mb-1 ${
+                              QA_TASKS.indexOf(task) === taskIndex
+                                ? 'bg-blue-500/30 border border-blue-400 text-white'
+                                : completedTasks.includes(task.id)
+                                ? 'bg-green-500/20 text-green-300 hover:bg-green-500/30'
+                                : 'text-white/60 hover:bg-white/10'
+                            }`}
+                          >
+                            {completedTasks.includes(task.id) ? '✓ ' : ''}{idx + 1}. {task.title}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {leftTab === 'chat' && (
+              <div className="flex-1 flex flex-col min-h-0">
+                <ChatAssistant currentTask={currentTask} />
+              </div>
+            )}
           </div>
         </ResizablePanel>
 
@@ -1061,11 +1077,6 @@ export default function SqlPlaygroundQA({ onProgressUpdate, showTetris = false }
                 >
                   Next →
                 </button>
-              </div>
-
-              {/* AI Chat Assistant */}
-              <div className="border-t border-white/10 pt-3 mt-4 flex-1 flex flex-col min-h-0">
-                <ChatAssistant currentTask={currentTask} />
               </div>
             </div>
           )}
