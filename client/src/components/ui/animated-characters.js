@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { cn } from "../../lib/utils";
 import { useUser } from "../../contexts/UserContext";
+import useCharacterAgent from "../../hooks/useCharacterAgent";
 
 const Pupil = ({ 
   size = 12, 
@@ -149,6 +150,13 @@ const AnimatedCharacters = ({ className }) => {
   const [isBlackRightEyeBlinking, setIsBlackRightEyeBlinking] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [chatInput, setChatInput] = useState('');
+  const [chatCharacter, setChatCharacter] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  
+  // Get user ID for agent context
+  const userId = userProfile?.userId || localStorage.getItem('userId') || 'guest';
+  const { sendMessage, isLoading } = useCharacterAgent(userId);
   const [position, setPosition] = useState(() => {
     // Try localStorage first (works for all users)
     const savedPosition = localStorage.getItem('charactersPosition');
@@ -481,6 +489,38 @@ const AnimatedCharacters = ({ className }) => {
     window.addEventListener('mouseup', handleResizeMouseUp);
   };
 
+  const handleChatClick = (character) => {
+    setChatCharacter(character);
+    setChatInput('');
+  };
+
+  const handleChatSubmit = async (e) => {
+    if (e) e.preventDefault();
+    if (!chatInput.trim() || !chatCharacter || isLoading) return;
+
+    const userMessage = chatInput.trim();
+    setChatInput('');
+    setChatMessages(prev => [...prev, { from: 'user', text: userMessage }]);
+
+    try {
+      const response = await sendMessage(chatCharacter, userMessage, {
+        currentPage: window.location.pathname
+      });
+      
+      setChatMessages(prev => [...prev, { from: chatCharacter, text: response.response }]);
+      
+      // Update speaking character for speech bubble
+      setSpeakingCharacter(chatCharacter);
+      setSpeechText(response.response);
+      setTimeout(() => {
+        setSpeakingCharacter(null);
+        setSpeechText('');
+      }, 4000);
+    } catch (error) {
+      console.error('Chat error:', error);
+    }
+  };
+
   return (
     <div className={cn("relative w-full h-full", className)}>
       
@@ -505,7 +545,7 @@ const AnimatedCharacters = ({ className }) => {
         {/* Purple tall rectangle character - Back layer (z-1) */}
         <div 
           ref={purpleRef}
-          className="absolute bottom-0 transition-all duration-700 ease-in-out"
+          className="absolute bottom-0 transition-all duration-700 ease-in-out cursor-pointer hover:opacity-90"
           style={{
             left: '23px',
             width: '60px',
@@ -516,6 +556,7 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${purplePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
+          onClick={() => handleChatClick('purple')}
         >
           {/* Resize handle */}
           <div
@@ -554,7 +595,7 @@ const AnimatedCharacters = ({ className }) => {
         {/* Black medium rectangle character - Middle layer (z-2) */}
         <div 
           ref={blackRef}
-          className="absolute bottom-0 transition-all duration-700 ease-in-out"
+          className="absolute bottom-0 transition-all duration-700 ease-in-out cursor-pointer hover:opacity-90"
           style={{
             left: '74px',
             width: '40px',
@@ -565,6 +606,7 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${blackPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
+          onClick={() => handleChatClick('black')}
         >
           {/* Resize handle */}
           <div
@@ -601,7 +643,7 @@ const AnimatedCharacters = ({ className }) => {
         {/* Orange semi-circle character - Front left (z-3) */}
         <div 
           ref={orangeRef}
-          className="absolute bottom-0 transition-all duration-700 ease-in-out"
+          className="absolute bottom-0 transition-all duration-700 ease-in-out cursor-pointer hover:opacity-90"
           style={{
             left: '0px',
             width: '80px',
@@ -612,6 +654,7 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${orangePos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
+          onClick={() => handleChatClick('orange')}
         >
           {/* Resize handle */}
           <div
@@ -697,7 +740,7 @@ const AnimatedCharacters = ({ className }) => {
         {/* Yellow rounded rectangle character - Front right (z-4) */}
         <div 
           ref={yellowRef}
-          className="absolute bottom-0 transition-all duration-700 ease-in-out"
+          className="absolute bottom-0 transition-all duration-700 ease-in-out cursor-pointer hover:opacity-90"
           style={{
             left: '103px',
             width: '46px',
@@ -708,6 +751,7 @@ const AnimatedCharacters = ({ className }) => {
             transform: `skewX(${yellowPos.bodySkew}deg)`,
             transformOrigin: 'bottom center',
           }}
+          onClick={() => handleChatClick('yellow')}
         >
           {/* Resize handle */}
           <div
@@ -791,6 +835,104 @@ const AnimatedCharacters = ({ className }) => {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Chat Interface */}
+      {chatCharacter && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100001] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-gray-300 dark:border-gray-600 w-[400px] max-w-[90vw] pointer-events-auto">
+          <div className="p-4 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div 
+                className="w-8 h-8 rounded-full"
+                style={{
+                  backgroundColor: chatCharacter === 'purple' ? '#6C3FF5' : 
+                                  chatCharacter === 'orange' ? '#FF9B6B' : 
+                                  chatCharacter === 'black' ? '#2D2D2D' : 
+                                  '#E8D754'
+                }}
+              />
+              <div>
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                  {chatCharacter === 'purple' ? 'Blue' : 
+                   chatCharacter === 'orange' ? 'Orange' : 
+                   chatCharacter === 'black' ? 'Black' : 'Yellow'}
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">QA Assistant</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setChatCharacter(null);
+                setChatMessages([]);
+                setChatInput('');
+              }}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="h-[300px] overflow-y-auto p-4 space-y-3">
+            {chatMessages.length === 0 && (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                Start chatting with {chatCharacter === 'purple' ? 'Blue' : chatCharacter === 'orange' ? 'Orange' : chatCharacter === 'black' ? 'Black' : 'Yellow'}!
+              </div>
+            )}
+            {chatMessages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[75%] rounded-2xl px-4 py-2 ${
+                    msg.from === 'user'
+                      ? 'bg-indigo-500 text-white'
+                      : chatCharacter === 'purple'
+                      ? 'bg-indigo-100 dark:bg-indigo-900 text-gray-900 dark:text-white'
+                      : chatCharacter === 'orange'
+                      ? 'bg-orange-100 dark:bg-orange-900 text-gray-900 dark:text-white'
+                      : chatCharacter === 'black'
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                      : 'bg-yellow-100 dark:bg-yellow-900 text-gray-900 dark:text-white'
+                  }`}
+                >
+                  <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl px-4 py-2">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <form onSubmit={handleChatSubmit} className="p-4 border-t border-gray-300 dark:border-gray-600">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder="Ask me anything..."
+                className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                disabled={isLoading}
+              />
+              <button
+                type="submit"
+                disabled={isLoading || !chatInput.trim()}
+                className="bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-400 text-white rounded-xl px-6 py-2 transition-colors"
+              >
+                Send
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

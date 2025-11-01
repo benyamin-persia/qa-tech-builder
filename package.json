@@ -4,12 +4,13 @@
   "description": "A beautiful, minimal, and modern website for building QA testing technology combinations with smart filtering",
   "main": "server/server.js",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run mcp\"",
     "server": "cd server && npm run dev",
     "client": "cd client && npm start",
+    "mcp": "cd mcp-server && npm run dev",
     "build": "cd client && npm run build",
     "start": "cd server && npm start",
-    "install-all": "npm install && cd client && npm install && cd ../server && npm install"
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install && cd ../mcp-server && npm install"
   },
   "keywords": [
     "qa",

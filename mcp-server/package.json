@@ -1,0 +1,27 @@
+{
+  "name": "qa-tech-builder-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for QA Tech Builder with AI character agents",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "keywords": [
+    "mcp",
+    "ai",
+    "qa",
+    "testing",
+    "agent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "axios": "^1.6.0"
+  }
+}
