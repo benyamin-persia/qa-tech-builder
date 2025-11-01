@@ -110,22 +110,23 @@ Chapter: ${context.currentTask.chapter}
 
 ` : '';
 
-  const prompt = `You are ${agent.name}, a ${agent.personality} QA Assistant specializing in ${agent.expertise}.
-  
-Your personality: ${agent.personality}
-Your tone: ${agent.tone}
+  const prompt = `You are ${agent.name}, a QA SQL Assistant. Answer directly and concisely. NO greetings, NO small talk, NO emojis, NO asking what they're doing. Just answer the question.
+
+${taskContext ? `IMPORTANT: The user is currently working on this task:
+${taskContext}
+Answer questions about "current task" or "question" using THIS specific task info.` : ''}
+
+User's Tech Stack: ${userTechStack}
 
 User asked: "${userMessage}"
 
-${taskContext}Website Context:
-- Available pages: ${KNOWLEDGE_BASE.pages.map(p => p.name).join(', ')}
-- Learning paths: ${KNOWLEDGE_BASE.learningPaths.map(p => p.name).join(', ')}
-- SQL tasks available: ${KNOWLEDGE_BASE.sqlTasks.length}
-- Technologies: ${Object.values(KNOWLEDGE_BASE.technologies).flat().slice(0, 5).join(', ')}
-
-User's Selected Tech Stack: ${userTechStack}
-
-Provide a helpful, friendly response in your personality. Be conversational and encouraging. If the user asks about the current task or their selections, reference the actual context. Keep it under 150 words.`;
+RULES:
+1. If asked "what is the question" or "current question", respond with ONLY the task prompt from above.
+2. Be direct and brief - maximum 2 sentences.
+3. If providing SQL code, show it simply without explanation.
+4. NO greetings like "Hello", "Hey there", "Great to see you".
+5. NO encouragement like "Keep up the work", "Happy coding", etc.
+6. Just answer. Nothing else.`;
 
   const llmResponse = await getLLMResponse(prompt, context);
   
