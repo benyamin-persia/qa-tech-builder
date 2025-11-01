@@ -4,6 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import { cn } from "../../lib/utils";
 import { useUser } from "../../contexts/UserContext";
 import useCharacterAgent from "../../hooks/useCharacterAgent";
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const Pupil = ({ 
   size = 12, 
@@ -153,6 +156,9 @@ const AnimatedCharacters = ({ className }) => {
   const [chatInput, setChatInput] = useState('');
   const [chatCharacter, setChatCharacter] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
+  const [chatSize, setChatSize] = useState({ width: 400, height: 500 });
+  const [isResizing, setIsResizing] = useState(false);
+  const chatRef = useRef(null);
   
   // Get user ID for agent context
   const userId = userProfile?.userId || localStorage.getItem('userId') || 'guest';
@@ -215,6 +221,32 @@ const AnimatedCharacters = ({ className }) => {
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDragging, dragOffset]);
+
+  // Handle chat resizing
+  useEffect(() => {
+    if (!isResizing) return;
+    
+    const handleMouseMove = (e) => {
+      if (chatRef.current) {
+        const rect = chatRef.current.getBoundingClientRect();
+        setChatSize({
+          width: Math.max(300, e.clientX - rect.left),
+          height: Math.max(200, e.clientY - rect.top)
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing]);
 
   // Sync with user profile
   useEffect(() => {
@@ -840,7 +872,20 @@ const AnimatedCharacters = ({ className }) => {
 
       {/* Chat Interface */}
       {chatCharacter && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100001] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-gray-300 dark:border-gray-600 w-[400px] max-w-[90vw] pointer-events-auto">
+        <div 
+          ref={chatRef}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100001] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-gray-300 dark:border-gray-600 pointer-events-auto"
+          style={{ width: `${chatSize.width}px`, height: `${chatSize.height}px`, minWidth: '300px', minHeight: '200px' }}
+        >
+          {/* Resize handle */}
+          <div
+            className="absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize bg-gray-400 dark:bg-gray-600 rounded-tl-lg"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setIsResizing(true);
+            }}
+            style={{ cursor: 'nwse-resize' }}
+          />
           <div className="p-4 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div 
@@ -873,7 +918,7 @@ const AnimatedCharacters = ({ className }) => {
             </button>
           </div>
 
-          <div className="h-[300px] overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ height: `${chatSize.height - 160}px` }}>
             {chatMessages.length === 0 && (
               <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                 Start chatting with {chatCharacter === 'purple' ? 'Blue' : chatCharacter === 'orange' ? 'Orange' : chatCharacter === 'black' ? 'Black' : 'Yellow'}!
@@ -897,7 +942,31 @@ const AnimatedCharacters = ({ className }) => {
                       : 'bg-yellow-100 dark:bg-yellow-900 text-gray-900 dark:text-white'
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                  <div className="text-sm prose prose-sm max-w-none dark:prose-invert">
+                    <ReactMarkdown
+                      components={{
+                        code({node, inline, className, children, ...props}) {
+                          const match = /language-(\w+)/.exec(className || '');
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              style={vscDarkPlus}
+                              language={match[1]}
+                              PreTag="div"
+                              {...props}
+                            >
+                              {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          );
+                        }
+                      }}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </div>
             ))}
